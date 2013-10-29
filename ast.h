@@ -31,4 +31,6 @@ ast_expr_t* expr_mul(ast_expr_t* a, ast_expr_t* b);
 ast_expr_t* expr_div(ast_expr_t* a, ast_expr_t* b);
 ast_expr_t* expr_mod(ast_expr_t* a, ast_expr_t* b);
 
+void expr_del(ast_expr_t* e);
+
 #endif

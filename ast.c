@@ -43,3 +43,23 @@ EXPR_BIN(sub, E_SUB)
 EXPR_BIN(mul, E_MUL)
 EXPR_BIN(div, E_DIV)
 EXPR_BIN(mod, E_MOD)
+
+void expr_del(ast_expr_t* e)
+{
+	switch (e->type)
+	{
+	case E_INC:
+	case E_DEC:
+		expr_del(e->v.uni.a);
+		break;
+	case E_ADD:
+	case E_SUB:
+	case E_MUL:
+	case E_DIV:
+	case E_MOD:
+		expr_del(e->v.bin.a);
+		expr_del(e->v.bin.b);
+		break;
+	}
+	free(e);
+}
