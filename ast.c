@@ -4,7 +4,7 @@
 
 #include "util.h"
 
-ast_lval_t* lval_var(ast_var_t v)
+ast_lval_t* lval_var(ast_id_t v)
 {
 	ast_lval_t* ret = MALLOC(ast_lval_t);
 	ret->type = L_VAR;
@@ -179,4 +179,19 @@ void blck_del(ast_blck_t* b)
 {
 	stml_del(b->l);
 	free(b);
+}
+
+ast_fnct_t* fnct_make(ast_id_t n, ast_blck_t* c)
+{
+	ast_fnct_t* ret = MALLOC(ast_fnct_t);
+	ret->n = n;
+	ret->c = c;
+	return ret;
+}
+
+void fnct_del(ast_fnct_t* f)
+{
+	if (f->c)
+		blck_del(f->c);
+	free(f);
 }

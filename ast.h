@@ -1,12 +1,13 @@
 #ifndef AST_H
 #define AST_H
 
-typedef unsigned int      ast_var_t;
+typedef unsigned int      ast_id_t;
 typedef struct ast_lval_t ast_lval_t;
 typedef struct ast_expr_t ast_expr_t;
 typedef struct ast_stmt_t ast_stmt_t;
 typedef struct ast_stml_t ast_stml_t;
 typedef struct ast_blck_t ast_blck_t;
+typedef struct ast_fnct_t ast_fnct_t;
 
 struct ast_lval_t
 {
@@ -17,12 +18,12 @@ struct ast_lval_t
 	} type;
 	union
 	{
-		struct { ast_var_t a;   } var;
+		struct { ast_id_t    a; } var;
 		struct { ast_expr_t* a; } exp;
 	} v;
 };
 
-ast_lval_t* lval_var(ast_var_t v);
+ast_lval_t* lval_var(ast_id_t v);
 ast_lval_t* lval_drf(ast_expr_t* e);
 
 void lval_del(ast_lval_t* l);
@@ -102,5 +103,15 @@ struct ast_blck_t
 ast_blck_t* blck_make(ast_stml_t* l);
 
 void blck_del(ast_blck_t* b);
+
+struct ast_fnct_t
+{
+	ast_id_t    n;
+	ast_blck_t* c;
+};
+
+ast_fnct_t* fnct_make(ast_id_t n, ast_blck_t* c);
+
+void fnct_del(ast_fnct_t* f);
 
 #endif
