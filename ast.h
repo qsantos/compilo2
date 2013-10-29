@@ -12,18 +12,6 @@ typedef struct ast_fnct_t ast_fnct_t;
 
 
 
-struct ast_argl_t
-{
-	ast_expr_t* a;
-	ast_argl_t* l;
-};
-
-ast_argl_t* argl_make(ast_expr_t* a, ast_argl_t* l);
-
-void argl_del(ast_argl_t* l);
-
-
-
 struct ast_lval_t
 {
 	enum
@@ -42,6 +30,18 @@ ast_lval_t* lval_var(ast_id_t v);
 ast_lval_t* lval_drf(ast_expr_t* e);
 
 void lval_del(ast_lval_t* l);
+
+
+
+struct ast_argl_t
+{
+	ast_expr_t* a;
+	ast_argl_t* l;
+};
+
+ast_argl_t* argl_make(ast_expr_t* a, ast_argl_t* l);
+
+void argl_del(ast_argl_t* l);
 
 
 
