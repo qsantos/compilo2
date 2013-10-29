@@ -117,6 +117,7 @@ struct ast_stmt_t
 {
 	enum
 	{
+		S_BLK,
 		S_EXP,
 		S_DEF,
 		S_IFT,
@@ -125,19 +126,21 @@ struct ast_stmt_t
 	} type;
 	union
 	{
+		struct { ast_blck_t* a; } blk;
 		struct { ast_expr_t* a; } exp;
 		struct { ast_decl_t* a; } def;
-		struct { ast_expr_t* c; ast_blck_t *a;}    ift;
-		struct { ast_expr_t* c; ast_blck_t *a,*b;} ite;
-		struct { ast_expr_t* c; ast_blck_t *a;}    whi;
+		struct { ast_expr_t* c; ast_stmt_t *a;}    ift;
+		struct { ast_expr_t* c; ast_stmt_t *a,*b;} ite;
+		struct { ast_expr_t* c; ast_stmt_t *a;}    whi;
 	} v;
 };
 
+ast_stmt_t* stmt_blck(ast_blck_t* b);
 ast_stmt_t* stmt_expr(ast_expr_t* e);
 ast_stmt_t* stmt_decl(ast_decl_t* d);
-ast_stmt_t* stmt_ifth(ast_expr_t* c, ast_blck_t* a);
-ast_stmt_t* stmt_ifte(ast_expr_t* c, ast_blck_t* a, ast_blck_t* b);
-ast_stmt_t* stmt_whil(ast_expr_t* c, ast_blck_t* a);
+ast_stmt_t* stmt_ifth(ast_expr_t* c, ast_stmt_t* a);
+ast_stmt_t* stmt_ifte(ast_expr_t* c, ast_stmt_t* a, ast_stmt_t* b);
+ast_stmt_t* stmt_whil(ast_expr_t* c, ast_stmt_t* a);
 
 void stmt_del(ast_stmt_t* s);
 

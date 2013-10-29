@@ -148,6 +148,14 @@ void decl_del(ast_decl_t* d)
 	free(d);
 }
 
+ast_stmt_t* stmt_blck(ast_blck_t* b)
+{
+	ast_stmt_t* ret = MALLOC(ast_stmt_t);
+	ret->type = S_BLK;
+	ret->v.blk.a = b;
+	return ret;
+}
+
 ast_stmt_t* stmt_expr(ast_expr_t* e)
 {
 	ast_stmt_t* ret = MALLOC(ast_stmt_t);
@@ -164,7 +172,7 @@ ast_stmt_t* stmt_decl(ast_decl_t* d)
 	return ret;
 }
 
-ast_stmt_t* stmt_ifth(ast_expr_t* c, ast_blck_t* a)
+ast_stmt_t* stmt_ifth(ast_expr_t* c, ast_stmt_t* a)
 {
 	ast_stmt_t* ret = MALLOC(ast_stmt_t);
 	ret->type = S_IFT;
@@ -173,7 +181,7 @@ ast_stmt_t* stmt_ifth(ast_expr_t* c, ast_blck_t* a)
 	return ret;
 }
 
-ast_stmt_t* stmt_ifte(ast_expr_t* c, ast_blck_t* a, ast_blck_t* b)
+ast_stmt_t* stmt_ifte(ast_expr_t* c, ast_stmt_t* a, ast_stmt_t* b)
 {
 	ast_stmt_t* ret = MALLOC(ast_stmt_t);
 	ret->type = S_ITE;
@@ -183,7 +191,7 @@ ast_stmt_t* stmt_ifte(ast_expr_t* c, ast_blck_t* a, ast_blck_t* b)
 	return ret;
 }
 
-ast_stmt_t* stmt_whil(ast_expr_t* c, ast_blck_t* a)
+ast_stmt_t* stmt_whil(ast_expr_t* c, ast_stmt_t* a)
 {
 	ast_stmt_t* ret = MALLOC(ast_stmt_t);
 	ret->type = S_WHI;
@@ -196,6 +204,9 @@ void stmt_del(ast_stmt_t* s)
 {
 	switch (s->type)
 	{
+	case S_BLK:
+		blck_del(s->v.blk.a);
+		break;
 	case S_EXP:
 		expr_del(s->v.exp.a);
 		break;
@@ -204,16 +215,16 @@ void stmt_del(ast_stmt_t* s)
 		break;
 	case S_IFT:
 		expr_del(s->v.ift.c);
-		blck_del(s->v.ift.a);
+		stmt_del(s->v.ift.a);
 		break;
 	case S_ITE:
 		expr_del(s->v.ite.c);
-		blck_del(s->v.ite.a);
-		blck_del(s->v.ite.b);
+		stmt_del(s->v.ite.a);
+		stmt_del(s->v.ite.b);
 		break;
 	case S_WHI:
 		expr_del(s->v.whi.c);
-		blck_del(s->v.whi.a);
+		stmt_del(s->v.whi.a);
 		break;
 	}
 	free(s);

@@ -92,6 +92,9 @@ void print_stmt(ast_stmt_t* s)
 {
 	switch (s->type)
 	{
+	case S_BLK:
+		print_blck(s->v.blk.a);
+		break;
 	case S_EXP:
 		print_expr(s->v.exp.a);
 		break;
@@ -101,21 +104,21 @@ void print_stmt(ast_stmt_t* s)
 		printf("if (");
 		print_expr(s->v.ift.c);
 		printf(")\n");
-		print_blck(s->v.ift.a);
+		print_stmt(s->v.ift.a);
 		break;
 	case S_ITE:
 		printf("if (");
 		print_expr(s->v.ite.c);
 		printf(")\n");
-		print_blck(s->v.ite.a);
+		print_stmt(s->v.ite.a);
 		printf("else\n");
-		print_blck(s->v.ite.b);
+		print_stmt(s->v.ite.b);
 		break;
 	case S_WHI:
 		printf("while (");
 		print_expr(s->v.ift.c);
 		printf(")\n");
-		print_blck(s->v.ift.a);
+		print_stmt(s->v.ift.a);
 		break;
 	}
 }
