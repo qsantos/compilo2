@@ -5,14 +5,17 @@ TARGETS = compilo
 
 all: $(TARGETS)
 
-compilo: main.o util.o ast.o print.o
+compilo: main.o util.o ast.o print.o lexer.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+%.c: %.l
+	flex -o $@ $<
+
 clean:
-	rm -f *.o
+	rm -f *.o lexer.c
 
 destroy: clean
 	rm -f $(TARGETS)
