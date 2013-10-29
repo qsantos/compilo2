@@ -11,11 +11,11 @@ compilo: main.o util.o ast.o print.o lexer.o parser.o
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-%.c: %.l
+%.c: %.l parser.h
 	flex -o $@ $<
 
-%.c: %.y
-	bison -o $@ $<
+%.c %.h: %.y
+	bison --defines=$*.h -o $*.c $<
 
 clean:
 	rm -f *.o lexer.c parser.c
