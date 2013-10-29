@@ -5,6 +5,8 @@ typedef unsigned int      ast_var_t;
 typedef struct ast_lval_t ast_lval_t;
 typedef struct ast_expr_t ast_expr_t;
 typedef struct ast_stmt_t ast_stmt_t;
+typedef struct ast_stml_t ast_stml_t;
+typedef struct ast_blck_t ast_blck_t;
 
 struct ast_lval_t
 {
@@ -71,17 +73,34 @@ struct ast_stmt_t
 	union
 	{
 		struct { ast_expr_t* a; } exp;
-		struct { ast_expr_t* c; ast_stmt_t *a;}    ift;
-		struct { ast_expr_t* c; ast_stmt_t *a,*b;} ite;
-		struct { ast_expr_t* c; ast_stmt_t *a;}    whi;
+		struct { ast_expr_t* c; ast_blck_t *a;}    ift;
+		struct { ast_expr_t* c; ast_blck_t *a,*b;} ite;
+		struct { ast_expr_t* c; ast_blck_t *a;}    whi;
 	} v;
 };
 
 ast_stmt_t* stmt_expr(ast_expr_t* e);
-ast_stmt_t* stmt_ifth(ast_expr_t* c, ast_stmt_t* a);
-ast_stmt_t* stmt_ifte(ast_expr_t* c, ast_stmt_t* a, ast_stmt_t* b);
-ast_stmt_t* stmt_whil(ast_expr_t* c, ast_stmt_t* a);
+ast_stmt_t* stmt_ifth(ast_expr_t* c, ast_blck_t* a);
+ast_stmt_t* stmt_ifte(ast_expr_t* c, ast_blck_t* a, ast_blck_t* b);
+ast_stmt_t* stmt_whil(ast_expr_t* c, ast_blck_t* a);
 
 void stmt_del(ast_stmt_t* s);
+
+struct ast_stml_t
+{
+	struct ast_stmt_t* s;
+	struct ast_stml_t* l;
+};
+
+ast_stml_t* stml_make(ast_stmt_t* s, ast_stml_t* l);
+
+struct ast_blck_t
+{
+	ast_stml_t* l;
+};
+
+ast_blck_t* blck_make(ast_stml_t* l);
+
+void blck_del(ast_blck_t* b);
 
 #endif
