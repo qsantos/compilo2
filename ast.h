@@ -49,27 +49,23 @@ struct ast_expr_t
 {
 	enum
 	{
-		E_INC,
-		E_DEC,
 		E_ADD,
 		E_SUB,
 		E_MUL,
 		E_DIV,
 		E_MOD,
+		E_INC,
+		E_DEC,
 		E_LVA,
 		E_FUN,
 	} type;
 	union
 	{
-		struct { ast_expr_t *a;    } uni;
 		struct { ast_expr_t *a,*b; } bin;
 		struct { ast_lval_t* a;    } lva;
 		struct { ast_id_t n; ast_argl_t* l; } fun;
 	} v;
 };
-
-ast_expr_t* expr_inc(ast_expr_t* a);
-ast_expr_t* expr_dec(ast_expr_t* a);
 
 ast_expr_t* expr_add(ast_expr_t* a, ast_expr_t* b);
 ast_expr_t* expr_sub(ast_expr_t* a, ast_expr_t* b);
@@ -77,6 +73,8 @@ ast_expr_t* expr_mul(ast_expr_t* a, ast_expr_t* b);
 ast_expr_t* expr_div(ast_expr_t* a, ast_expr_t* b);
 ast_expr_t* expr_mod(ast_expr_t* a, ast_expr_t* b);
 
+ast_expr_t* expr_inc(ast_lval_t* a);
+ast_expr_t* expr_dec(ast_lval_t* a);
 ast_expr_t* expr_lva(ast_lval_t* l);
 
 ast_expr_t* expr_fun(ast_id_t n, ast_argl_t* l);

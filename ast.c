@@ -50,18 +50,6 @@ void lval_del(ast_lval_t* l)
 	free(l);
 }
 
-#define EXPR_UNI(N,C) \
-ast_expr_t* expr_##N(ast_expr_t* a) \
-{ \
-	ast_expr_t* ret = MALLOC(ast_expr_t); \
-	ret->type = C; \
-	ret->v.uni.a = a; \
-	return ret; \
-} \
-
-EXPR_UNI(inc, E_INC)
-EXPR_UNI(dec, E_DEC)
-
 #define EXPR_BIN(N,C) \
 ast_expr_t* expr_##N(ast_expr_t* a, ast_expr_t* b) \
 { \
@@ -78,13 +66,18 @@ EXPR_BIN(mul, E_MUL)
 EXPR_BIN(div, E_DIV)
 EXPR_BIN(mod, E_MOD)
 
-ast_expr_t* expr_lva(ast_lval_t* l)
-{
-	ast_expr_t* ret = MALLOC(ast_expr_t);
-	ret->type = E_LVA;
-	ret->v.lva.a = l;
-	return ret;
-}
+#define EXPR_LVA(N,C) \
+ast_expr_t* expr_##N(ast_lval_t* a) \
+{ \
+	ast_expr_t* ret = MALLOC(ast_expr_t); \
+	ret->type = C; \
+	ret->v.lva.a = a; \
+	return ret; \
+} \
+
+EXPR_LVA(inc, E_INC)
+EXPR_LVA(dec, E_DEC)
+EXPR_LVA(lva, E_LVA)
 
 ast_expr_t* expr_fun(ast_id_t n, ast_argl_t* l)
 {
@@ -99,10 +92,6 @@ void expr_del(ast_expr_t* e)
 {
 	switch (e->type)
 	{
-	case E_INC:
-	case E_DEC:
-		expr_del(e->v.uni.a);
-		break;
 	case E_ADD:
 	case E_SUB:
 	case E_MUL:
@@ -111,6 +100,8 @@ void expr_del(ast_expr_t* e)
 		expr_del(e->v.bin.a);
 		expr_del(e->v.bin.b);
 		break;
+	case E_INC:
+	case E_DEC:
 	case E_LVA:
 		lval_del(e->v.lva.a);
 		break;
