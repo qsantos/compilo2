@@ -17,8 +17,8 @@ struct ast_expr_t
 	} type_t;
 	union
 	{
-		struct { ast_expr_t a;   } uni;
-		struct { ast_expr_t a,b; } bin;
+		struct { ast_expr_t *a;    } uni;
+		struct { ast_expr_t *a,*b; } bin;
 	} v;
 };
 
