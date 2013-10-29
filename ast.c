@@ -16,6 +16,35 @@ void* smalloc(size_t size, const char* file, int line)
 
 #define MALLOC(T) ((T*) smalloc(sizeof(T), __FILE__, __LINE__))
 
+ast_lval_t* lval_var(ast_var_t v)
+{
+	ast_lval_t* ret = MALLOC(ast_lval_t);
+	ret->type = L_VAR;
+	ret->v.var.a = v;
+	return ret;
+}
+
+ast_lval_t* lval_drf(ast_expr_t* e)
+{
+	ast_lval_t* ret = MALLOC(ast_lval_t);
+	ret->type = L_DRF;
+	ret->v.expr.a = e;
+	return ret;
+}
+
+void lval_del(ast_lval_t* l)
+{
+	switch (l->type)
+	{
+	case L_VAR:
+		break;
+	case L_DRF:
+		expr_del(l->v.expr.a);
+		break;
+	}
+	free(l);
+}
+
 #define EXPR_UNI(N,C) \
 ast_expr_t* expr_##N(ast_expr_t* a) \
 { \
@@ -44,6 +73,14 @@ EXPR_BIN(mul, E_MUL)
 EXPR_BIN(div, E_DIV)
 EXPR_BIN(mod, E_MOD)
 
+ast_expr_t* expr_lva(ast_lval_t* l)
+{
+	ast_expr_t* ret = MALLOC(ast_expr_t);
+	ret->type = E_LVA;
+	ret->v.lva.a = l;
+	return ret;
+}
+
 void expr_del(ast_expr_t* e)
 {
 	switch (e->type)
@@ -59,6 +96,9 @@ void expr_del(ast_expr_t* e)
 	case E_MOD:
 		expr_del(e->v.bin.a);
 		expr_del(e->v.bin.b);
+		break;
+	case E_LVA:
+		lval_del(e->v.lva.a);
 		break;
 	}
 	free(e);
