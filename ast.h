@@ -57,13 +57,15 @@ struct ast_expr_t
 		E_INC,
 		E_DEC,
 		E_LVA,
+		E_ASG,
 		E_FUN,
 	} type;
 	union
 	{
 		struct { ast_expr_t *a,*b; } bin;
 		struct { ast_lval_t* a;    } lva;
-		struct { ast_id_t n; ast_argl_t* l; } fun;
+		struct { ast_lval_t* a; ast_expr_t* b; } asg;
+		struct { ast_id_t    n; ast_argl_t* l; } fun;
 	} v;
 };
 
@@ -76,6 +78,8 @@ ast_expr_t* expr_mod(ast_expr_t* a, ast_expr_t* b);
 ast_expr_t* expr_inc(ast_lval_t* a);
 ast_expr_t* expr_dec(ast_lval_t* a);
 ast_expr_t* expr_lva(ast_lval_t* l);
+
+ast_expr_t* expr_asg(ast_lval_t* a, ast_expr_t* b);
 
 ast_expr_t* expr_fun(ast_id_t n, ast_argl_t* l);
 

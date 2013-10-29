@@ -79,6 +79,14 @@ EXPR_LVA(inc, E_INC)
 EXPR_LVA(dec, E_DEC)
 EXPR_LVA(lva, E_LVA)
 
+ast_expr_t* expr_asg(ast_lval_t* a, ast_expr_t* b)
+{
+	ast_expr_t* ret = MALLOC(ast_expr_t);
+	ret->v.asg.a = a;
+	ret->v.asg.b = b;
+	return ret;
+}
+
 ast_expr_t* expr_fun(ast_id_t n, ast_argl_t* l)
 {
 	ast_expr_t* ret = MALLOC(ast_expr_t);
@@ -104,6 +112,10 @@ void expr_del(ast_expr_t* e)
 	case E_DEC:
 	case E_LVA:
 		lval_del(e->v.lva.a);
+		break;
+	case E_ASG:
+		lval_del(e->v.asg.a);
+		expr_del(e->v.asg.b);
 		break;
 	case E_FUN:
 		argl_del(e->v.fun.l);
