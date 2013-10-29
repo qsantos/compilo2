@@ -5,7 +5,7 @@ TARGETS = compilo
 
 all: $(TARGETS)
 
-compilo: main.o ast.o
+compilo: main.o util.o ast.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
 %.o: %.c

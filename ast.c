@@ -1,20 +1,8 @@
 #include "ast.h"
 
 #include <stdlib.h>
-#include <stdio.h>
 
-void* smalloc(size_t size, const char* file, int line)
-{
-	void* ret = malloc(size);
-	if (!ret)
-	{
-		fprintf(stderr, "Allocation failed at %s:%i\n", file, line);
-		exit(1);
-	}
-	return ret;
-}
-
-#define MALLOC(T) ((T*) smalloc(sizeof(T), __FILE__, __LINE__))
+#include "util.h"
 
 ast_lval_t* lval_var(ast_var_t v)
 {
