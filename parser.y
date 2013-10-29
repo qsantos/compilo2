@@ -30,7 +30,7 @@ extern ast_fnct_t* parsed;
 %left '+' '-'
 %left '*' '/' '%'
 %left '=' ',' ';'
-%right IF THEN ELSE WHILE
+%right IF ELSE WHILE
 %type  <t> type
 %type  <l> lval
 %type  <a> argl
@@ -60,50 +60,50 @@ argl:
 ;
 
 expr:
-  '(' expr ')'                        { $$ = $2;                    }
-| integer                             { $$ = expr_imm($1);          }
-| expr '+' expr                       { $$ = expr_add($1, $3);      }
-| expr '-' expr                       { $$ = expr_sub($1, $3);      }
-| expr '*' expr                       { $$ = expr_mul($1, $3);      }
-| expr '/' expr                       { $$ = expr_div($1, $3);      }
-| expr '%' expr                       { $$ = expr_mod($1, $3);      }
-| lval INC                            { $$ = expr_inc($1);          }
-| lval DEC                            { $$ = expr_dec($1);          }
-| lval                                { $$ = expr_lva($1);          }
-| lval '=' expr                       { $$ = expr_asg($1, $3);      }
-| id '(' argl ')'                     { $$ = expr_fun($1, $3);      }
+  '(' expr ')'                   { $$ = $2;                    }
+| integer                        { $$ = expr_imm($1);          }
+| expr '+' expr                  { $$ = expr_add($1, $3);      }
+| expr '-' expr                  { $$ = expr_sub($1, $3);      }
+| expr '*' expr                  { $$ = expr_mul($1, $3);      }
+| expr '/' expr                  { $$ = expr_div($1, $3);      }
+| expr '%' expr                  { $$ = expr_mod($1, $3);      }
+| lval INC                       { $$ = expr_inc($1);          }
+| lval DEC                       { $$ = expr_dec($1);          }
+| lval                           { $$ = expr_lva($1);          }
+| lval '=' expr                  { $$ = expr_asg($1, $3);      }
+| id '(' argl ')'                { $$ = expr_fun($1, $3);      }
 ;
 
 decl:
-  type id                             { $$ = decl_make($1, $2);     }
+  type id                        { $$ = decl_make($1, $2);     }
 ;
 
 stmt:
-  blck                                { $$ = stmt_blck($1);         }
-| expr                                { $$ = stmt_expr($1);         }
-| decl                                { $$ = stmt_decl($1);         }
-| IF '(' expr ')' THEN stmt           { $$ = stmt_ifth($3, $6);     }
-| IF '(' expr ')' THEN stmt ELSE stmt { $$ = stmt_ifte($3, $6, $8); }
-| WHILE '(' expr ')' stmt             { $$ = stmt_whil($3, $5);     }
+  blck                           { $$ = stmt_blck($1);         }
+| expr                           { $$ = stmt_expr($1);         }
+| decl                           { $$ = stmt_decl($1);         }
+| IF '(' expr ')' stmt           { $$ = stmt_ifth($3, $5);     }
+| IF '(' expr ')' stmt ELSE stmt { $$ = stmt_ifte($3, $5, $7); }
+| WHILE '(' expr ')' stmt        { $$ = stmt_whil($3, $5);     }
 ;
 
 stml:
-                                      { $$ = NULL;                  }
-| stmt ';' stml                       { $$ = stml_make($1, $3);     }
+                                 { $$ = NULL;                  }
+| stmt ';' stml                  { $$ = stml_make($1, $3);     }
 ;
 
 blck:
-  '{' stml '}'                        { $$ = blck_make($2);         }
+  '{' stml '}'                   { $$ = blck_make($2);         }
 ;
 
 dcll:
-                                      { $$ = NULL;                  }
-| decl                                { $$ = dcll_make($1, NULL);   }
-| decl ',' dcll                       { $$ = dcll_make($1, $3);     }
+                                 { $$ = NULL;                  }
+| decl                           { $$ = dcll_make($1, NULL);   }
+| decl ',' dcll                  { $$ = dcll_make($1, $3);     }
 ;
 
 fcnt:
-  type id '(' dcll ')' blck           { $$ = fnct_make($2,$4,$1,$6);}
+  type id '(' dcll ')' blck      { $$ = fnct_make($2,$4,$1,$6);}
 ;
 
 prgm: fcnt { parsed = $1; };

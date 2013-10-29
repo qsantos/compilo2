@@ -17,7 +17,6 @@ int yywrap(void) { return 1; }
 char                   { return CHAR;  }
 int                    { return INT;   }
 if                     { return IF;    }
-then                   { return THEN;  }
 else                   { return ELSE;  }
 while                  { return WHILE; }
 [0-9]+                 { yylval.i = atoi(yytext);   return integer; }
