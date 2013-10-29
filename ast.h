@@ -9,6 +9,8 @@ typedef struct ast_stml_t ast_stml_t;
 typedef struct ast_blck_t ast_blck_t;
 typedef struct ast_fnct_t ast_fnct_t;
 
+
+
 struct ast_lval_t
 {
 	enum
@@ -27,6 +29,8 @@ ast_lval_t* lval_var(ast_id_t v);
 ast_lval_t* lval_drf(ast_expr_t* e);
 
 void lval_del(ast_lval_t* l);
+
+
 
 struct ast_expr_t
 {
@@ -62,6 +66,8 @@ ast_expr_t* expr_lva(ast_lval_t* l);
 
 void expr_del(ast_expr_t* e);
 
+
+
 struct ast_stmt_t
 {
 	enum
@@ -87,6 +93,8 @@ ast_stmt_t* stmt_whil(ast_expr_t* c, ast_blck_t* a);
 
 void stmt_del(ast_stmt_t* s);
 
+
+
 struct ast_stml_t
 {
 	struct ast_stmt_t* s;
@@ -94,6 +102,8 @@ struct ast_stml_t
 };
 
 ast_stml_t* stml_make(ast_stmt_t* s, ast_stml_t* l);
+
+
 
 struct ast_blck_t
 {
@@ -103,6 +113,8 @@ struct ast_blck_t
 ast_blck_t* blck_make(ast_stml_t* l);
 
 void blck_del(ast_blck_t* b);
+
+
 
 struct ast_fnct_t
 {
