@@ -49,6 +49,7 @@ struct ast_expr_t
 {
 	enum
 	{
+		E_IMM,
 		E_ADD,
 		E_SUB,
 		E_MUL,
@@ -62,12 +63,15 @@ struct ast_expr_t
 	} type;
 	union
 	{
+		struct { unsigned int v;   } imm;
 		struct { ast_expr_t *a,*b; } bin;
 		struct { ast_lval_t* a;    } lva;
 		struct { ast_lval_t* a; ast_expr_t* b; } asg;
 		struct { ast_id_t    n; ast_argl_t* l; } fun;
 	} v;
 };
+
+ast_expr_t* expr_imm(unsigned int v);
 
 ast_expr_t* expr_add(ast_expr_t* a, ast_expr_t* b);
 ast_expr_t* expr_sub(ast_expr_t* a, ast_expr_t* b);

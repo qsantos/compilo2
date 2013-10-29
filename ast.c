@@ -50,6 +50,14 @@ void lval_del(ast_lval_t* l)
 	free(l);
 }
 
+ast_expr_t* expr_imm(unsigned int v)
+{
+	ast_expr_t* ret = MALLOC(ast_expr_t);
+	ret->type = E_IMM;
+	ret->v.imm.v = v;
+	return ret;
+}
+
 #define EXPR_BIN(N,C) \
 ast_expr_t* expr_##N(ast_expr_t* a, ast_expr_t* b) \
 { \
@@ -100,6 +108,8 @@ void expr_del(ast_expr_t* e)
 {
 	switch (e->type)
 	{
+	case E_IMM:
+		break;
 	case E_ADD:
 	case E_SUB:
 	case E_MUL:
