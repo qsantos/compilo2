@@ -1,14 +1,24 @@
 #ifndef AST_H
 #define AST_H
 
-typedef unsigned int      ast_id_t;
+typedef const char*       ast_id_t;
 typedef struct ast_argl_t ast_argl_t;
 typedef struct ast_lval_t ast_lval_t;
 typedef struct ast_expr_t ast_expr_t;
+typedef struct ast_decl_t ast_decl_t;
 typedef struct ast_stmt_t ast_stmt_t;
 typedef struct ast_stml_t ast_stml_t;
 typedef struct ast_blck_t ast_blck_t;
+typedef struct ast_dcll_t ast_dcll_t;
 typedef struct ast_fnct_t ast_fnct_t;
+
+
+
+typedef enum
+{
+	T_CHAR,
+	T_INT,
+} ast_type_t;
 
 
 
@@ -91,11 +101,24 @@ void expr_del(ast_expr_t* e);
 
 
 
+struct ast_decl_t
+{
+	ast_type_t t;
+	ast_id_t   n;
+};
+
+ast_decl_t* decl_make(ast_type_t, ast_id_t n);
+
+void decl_del(ast_decl_t* d);
+
+
+
 struct ast_stmt_t
 {
 	enum
 	{
 		S_EXP,
+		S_DEF,
 		S_IFT,
 		S_ITE,
 		S_WHI,
@@ -103,6 +126,7 @@ struct ast_stmt_t
 	union
 	{
 		struct { ast_expr_t* a; } exp;
+		struct { ast_decl_t* a; } def;
 		struct { ast_expr_t* c; ast_blck_t *a;}    ift;
 		struct { ast_expr_t* c; ast_blck_t *a,*b;} ite;
 		struct { ast_expr_t* c; ast_blck_t *a;}    whi;
@@ -110,6 +134,7 @@ struct ast_stmt_t
 };
 
 ast_stmt_t* stmt_expr(ast_expr_t* e);
+ast_stmt_t* stmt_decl(ast_decl_t* d);
 ast_stmt_t* stmt_ifth(ast_expr_t* c, ast_blck_t* a);
 ast_stmt_t* stmt_ifte(ast_expr_t* c, ast_blck_t* a, ast_blck_t* b);
 ast_stmt_t* stmt_whil(ast_expr_t* c, ast_blck_t* a);
@@ -139,13 +164,27 @@ void blck_del(ast_blck_t* b);
 
 
 
+struct ast_dcll_t
+{
+	ast_decl_t* d;
+	ast_dcll_t* l;
+};
+
+ast_dcll_t* dcll_make(ast_decl_t* d, ast_dcll_t* l);
+
+void dcll_del(ast_dcll_t* l);
+
+
+
 struct ast_fnct_t
 {
 	ast_id_t    n;
+	ast_dcll_t* d;
+	ast_type_t  r;
 	ast_blck_t* c;
 };
 
-ast_fnct_t* fnct_make(ast_id_t n, ast_blck_t* c);
+ast_fnct_t* fnct_make(ast_id_t n, ast_dcll_t* d, ast_type_t r, ast_blck_t* c);
 
 void fnct_del(ast_fnct_t* f);
 

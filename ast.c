@@ -1,6 +1,7 @@
 #include "ast.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "util.h"
 
@@ -134,11 +135,32 @@ void expr_del(ast_expr_t* e)
 	free(e);
 }
 
+ast_decl_t* decl_make(ast_type_t t, ast_id_t n)
+{
+	ast_decl_t* ret = MALLOC(ast_decl_t);
+	ret->t = t;
+	ret->n = n;
+	return ret;
+}
+
+void decl_del(ast_decl_t* d)
+{
+	free(d);
+}
+
 ast_stmt_t* stmt_expr(ast_expr_t* e)
 {
 	ast_stmt_t* ret = MALLOC(ast_stmt_t);
 	ret->type = S_EXP;
 	ret->v.exp.a = e;
+	return ret;
+}
+
+ast_stmt_t* stmt_decl(ast_decl_t* d)
+{
+	ast_stmt_t* ret = MALLOC(ast_stmt_t);
+	ret->type = S_DEF;
+	ret->v.def.a = d;
 	return ret;
 }
 
@@ -176,6 +198,9 @@ void stmt_del(ast_stmt_t* s)
 	{
 	case S_EXP:
 		expr_del(s->v.exp.a);
+		break;
+	case S_DEF:
+		decl_del(s->v.def.a);
 		break;
 	case S_IFT:
 		expr_del(s->v.ift.c);
@@ -223,16 +248,35 @@ void blck_del(ast_blck_t* b)
 	free(b);
 }
 
-ast_fnct_t* fnct_make(ast_id_t n, ast_blck_t* c)
+ast_dcll_t* dcll_make(ast_decl_t* d, ast_dcll_t* l)
+{
+	ast_dcll_t* ret = MALLOC(ast_dcll_t);
+	ret->d = d;
+	ret->l = l;
+	return ret;
+}
+
+void dcll_del(ast_dcll_t* l)
+{
+	decl_del(l->d);
+	if (l->l)
+		dcll_del(l->l);
+	free(l);
+}
+
+ast_fnct_t* fnct_make(ast_id_t n, ast_dcll_t* d, ast_type_t r, ast_blck_t* c)
 {
 	ast_fnct_t* ret = MALLOC(ast_fnct_t);
 	ret->n = n;
+	ret->d = d;
+	ret->r = r;
 	ret->c = c;
 	return ret;
 }
 
 void fnct_del(ast_fnct_t* f)
 {
+	dcll_del(f->d);
 	if (f->c)
 		blck_del(f->c);
 	free(f);

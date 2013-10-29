@@ -2,13 +2,27 @@
 
 #include <stdio.h>
 
+void print_type(ast_type_t t)
+{
+	switch (t)
+	{
+	case T_CHAR:
+		printf("char");
+		break;
+	case T_INT:
+		printf("int");
+		break;
+	}
+}
+
 void print_id(ast_id_t n)
 {
-	printf("x%u", n);
+	printf("%s", n);
 }
 
 void print_argl(ast_argl_t* l)
 {
+	if (!l) return;
 	print_expr(l->a);
 	if (l->l)
 	{
@@ -67,6 +81,13 @@ void print_expr(ast_expr_t* e)
 	}
 }
 
+void print_decl(ast_decl_t* d)
+{
+	print_type(d->t);
+	printf(" ");
+	print_id(d->n);
+}
+
 void print_stmt(ast_stmt_t* s)
 {
 	switch (s->type)
@@ -74,6 +95,8 @@ void print_stmt(ast_stmt_t* s)
 	case S_EXP:
 		print_expr(s->v.exp.a);
 		break;
+	case S_DEF:
+		print_decl(s->v.def.a);
 	case S_IFT:
 		printf("if (");
 		print_expr(s->v.ift.c);
@@ -99,6 +122,7 @@ void print_stmt(ast_stmt_t* s)
 
 void print_stml(ast_stml_t* l)
 {
+	if (!l) return;
 	print_stmt(l->s);
 	printf(";\n");
 	if (l->l)
@@ -112,14 +136,30 @@ void print_blck(ast_blck_t* b)
 	printf("}\n");
 }
 
+void print_dcll(ast_dcll_t* l)
+{
+	if (!l) return;
+	print_decl(l->d);
+	if (l->l)
+	{
+		printf(", ");
+		print_dcll(l->l);
+	}
+}
+
 void print_fnct(ast_fnct_t* f)
 {
+	print_type(f->r);
+	printf(" ");
 	print_id(f->n);
+	printf("(");
+	print_dcll(f->d);
+	printf(")");
 	if (f->c)
 	{
-		printf("()\n");
+		printf("\n");
 		print_blck(f->c);
 	}
 	else
-		printf("();\n");
+		printf(";\n");
 }
