@@ -8,17 +8,17 @@ all: $(TARGETS)
 compilo: main.o util.o ast.o print.o lexer.o parser.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
-%.o: %.c
+%.o: %.c parser.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-%.c: %.l parser.h
+%.c: %.l
 	flex -o $@ $<
 
 %.c %.h: %.y
 	bison --defines=$*.h -o $*.c $<
 
 clean:
-	rm -f *.o lexer.c parser.c
+	rm -f *.o lexer.c parser.h parser.c
 
 destroy: clean
 	rm -f $(TARGETS)
