@@ -20,7 +20,8 @@ if                     { return IF;    }
 then                   { return THEN;  }
 else                   { return ELSE;  }
 while                  { return WHILE; }
-[0-9]+                 { yylval.i = atoi(yytext); return integer; }
-[_a-zA-Z][_a-zA-Z0-9]* { yylval.s = yytext;       return id; }
+[0-9]+                 { yylval.i = atoi(yytext);   return integer; }
+[_a-zA-Z][_a-zA-Z0-9]* { yylval.s = strdup(yytext); return id; }
 [+\-*/%(){}=,;]        { return yytext[0]; }
+[\n\t ]                { }
 %%

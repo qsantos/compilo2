@@ -23,11 +23,14 @@ extern ast_fnct_t* parsed;
 	ast_fnct_t* f;
 }
 %start prgm
-%token INC DEC
-%token IF THEN ELSE WHILE
 %token CHAR INT
 %token <i> integer
 %token <s> id
+%left INC DEC
+%left '+' '-'
+%left '*' '/' '%'
+%left '=' ',' ';'
+%right IF THEN ELSE WHILE
 %type  <t> type
 %type  <l> lval
 %type  <a> argl
@@ -76,7 +79,9 @@ decl:
 ;
 
 stmt:
-  expr                                { $$ = stmt_expr($1);         }
+  blck                                { $$ = stmt_blck($1);         }
+| expr                                { $$ = stmt_expr($1);         }
+| decl                                { $$ = stmt_decl($1);         }
 | IF '(' expr ')' THEN stmt           { $$ = stmt_ifth($3, $6);     }
 | IF '(' expr ')' THEN stmt ELSE stmt { $$ = stmt_ifte($3, $6, $8); }
 | WHILE '(' expr ')' stmt             { $$ = stmt_whil($3, $5);     }
@@ -88,8 +93,7 @@ stml:
 ;
 
 blck:
-  stmt                                { $$ = blck_make(stml_make($1,NULL));}
-| '{' stml '}'                        { $$ = blck_make($2);         }
+  '{' stml '}'                        { $$ = blck_make($2);         }
 ;
 
 dcll:
@@ -107,5 +111,5 @@ prgm: fcnt { parsed = $1; };
 extern int yylineno;
 void yyerror(char* s)
 {
-	fprintf(stderr, "<<<%s>>> at %i\n", s, yylineno);
+	fprintf(stderr, "%s at line %i\n", s, yylineno);
 }
