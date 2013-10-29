@@ -10,6 +10,9 @@ int yywrap(void) { return 1; }
 %option nounput
 
 %%
-[0-9]+        { yylval.num = atoi(yytext); return integer; }
+[0-9]+        { yylval.i = atoi(yytext); return integer; }
+[_a-zA-Z]\w*  { yylval.s = yytext;       return identifier; }
+\+\+          { return INC; }
+--            { return DEC; }
 [+\-*/%(){}]  { return yytext[0]; }
 %%
