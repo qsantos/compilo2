@@ -1,10 +1,12 @@
 %{
-void yyerror(char* s) { (void) s; }
 int yylex(void);
+void yyerror(char* s);
 #include <stdlib.h>
+#include <stdio.h>
 #include "ast.h"
 extern ast_fnct_t* parsed;
 %}
+
 %union
 {
 	unsigned int i;
@@ -24,18 +26,18 @@ extern ast_fnct_t* parsed;
 %token INC DEC
 %token IF THEN ELSE WHILE
 %token CHAR INT
-%token <i> integer;
-%token <s> id;
-%type  <t> type;
-%type  <l> lval;
-%type  <a> argl;
+%token <i> integer
+%token <s> id
+%type  <t> type
+%type  <l> lval
+%type  <a> argl
 %type  <e> expr
-%type  <z> decl;
-%type  <w> stmt;
-%type  <m> stml;
-%type  <b> blck;
-%type  <d> dcll;
-%type  <f> fcnt;
+%type  <z> decl
+%type  <w> stmt
+%type  <m> stml
+%type  <b> blck
+%type  <d> dcll
+%type  <f> fcnt
 
 %%
 type:
@@ -50,6 +52,7 @@ lval:
 
 argl:
                                       { $$ = NULL;                  }
+| expr                                { $$ = argl_make($1, NULL);   }
 | expr ',' argl                       { $$ = argl_make($1, $3);     }
 ;
 
@@ -85,16 +88,24 @@ stml:
 ;
 
 blck:
-  stml                                { $$ = blck_make($1);         }
+  stmt                                { $$ = blck_make(stml_make($1,NULL));}
+| '{' stml '}'                        { $$ = blck_make($2);         }
 ;
 
 dcll:
                                       { $$ = NULL;                  }
+| decl                                { $$ = dcll_make($1, NULL);   }
 | decl ',' dcll                       { $$ = dcll_make($1, $3);     }
 ;
 
 fcnt:
   type id '(' dcll ')' blck           { $$ = fnct_make($2,$4,$1,$6);}
+;
 
 prgm: fcnt { parsed = $1; };
 %%
+extern int yylineno;
+void yyerror(char* s)
+{
+	fprintf(stderr, "<<<%s>>> at %i\n", s, yylineno);
+}

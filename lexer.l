@@ -8,17 +8,19 @@ int yywrap(void) { return 1; }
 %}
 
 %option nounput
+%option yylineno
+
 
 %%
-[0-9]+        { yylval.i = atoi(yytext); return integer; }
-[_a-zA-Z]\w*  { yylval.s = yytext;       return id; }
-\+\+          { return INC;   }
---            { return DEC;   }
-char          { return CHAR;  }
-int           { return INT;   }
-if            { return IF;    }
-then          { return THEN;  }
-else          { return ELSE;  }
-while         { return WHILE; }
-[+\-*/%(){}=] { return yytext[0]; }
+\+\+                   { return INC;   }
+--                     { return DEC;   }
+char                   { return CHAR;  }
+int                    { return INT;   }
+if                     { return IF;    }
+then                   { return THEN;  }
+else                   { return ELSE;  }
+while                  { return WHILE; }
+[0-9]+                 { yylval.i = atoi(yytext); return integer; }
+[_a-zA-Z][_a-zA-Z0-9]* { yylval.s = yytext;       return id; }
+[+\-*/%(){}=,;]        { return yytext[0]; }
 %%
