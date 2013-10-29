@@ -2,12 +2,25 @@
 #define AST_H
 
 typedef unsigned int      ast_id_t;
+typedef struct ast_argl_t ast_argl_t;
 typedef struct ast_lval_t ast_lval_t;
 typedef struct ast_expr_t ast_expr_t;
 typedef struct ast_stmt_t ast_stmt_t;
 typedef struct ast_stml_t ast_stml_t;
 typedef struct ast_blck_t ast_blck_t;
 typedef struct ast_fnct_t ast_fnct_t;
+
+
+
+struct ast_argl_t
+{
+	ast_expr_t* a;
+	ast_argl_t* l;
+};
+
+ast_argl_t* argl_make(ast_expr_t* a, ast_argl_t* l);
+
+void argl_del(ast_argl_t* l);
 
 
 
@@ -44,12 +57,14 @@ struct ast_expr_t
 		E_DIV,
 		E_MOD,
 		E_LVA,
+		E_FUN,
 	} type;
 	union
 	{
 		struct { ast_expr_t *a;    } uni;
 		struct { ast_expr_t *a,*b; } bin;
 		struct { ast_lval_t* a;    } lva;
+		struct { ast_id_t n; ast_argl_t* l; } fun;
 	} v;
 };
 
@@ -63,6 +78,8 @@ ast_expr_t* expr_div(ast_expr_t* a, ast_expr_t* b);
 ast_expr_t* expr_mod(ast_expr_t* a, ast_expr_t* b);
 
 ast_expr_t* expr_lva(ast_lval_t* l);
+
+ast_expr_t* expr_fun(ast_id_t n, ast_argl_t* l);
 
 void expr_del(ast_expr_t* e);
 

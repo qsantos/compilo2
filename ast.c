@@ -4,6 +4,23 @@
 
 #include "util.h"
 
+
+ast_argl_t* argl_make(ast_expr_t* a, ast_argl_t* l)
+{
+	ast_argl_t* ret = MALLOC(ast_argl_t);
+	ret->a = a;
+	ret->l = l;
+	return ret;
+}
+
+void argl_del(ast_argl_t* l)
+{
+	expr_del(l->a);
+	if (l->l)
+		argl_del(l->l);
+	free(l);
+}
+
 ast_lval_t* lval_var(ast_id_t v)
 {
 	ast_lval_t* ret = MALLOC(ast_lval_t);
@@ -69,6 +86,15 @@ ast_expr_t* expr_lva(ast_lval_t* l)
 	return ret;
 }
 
+ast_expr_t* expr_fun(ast_id_t n, ast_argl_t* l)
+{
+	ast_expr_t* ret = MALLOC(ast_expr_t);
+	ret->type = E_FUN;
+	ret->v.fun.n = n;
+	ret->v.fun.l = l;
+	return ret;
+}
+
 void expr_del(ast_expr_t* e)
 {
 	switch (e->type)
@@ -87,6 +113,9 @@ void expr_del(ast_expr_t* e)
 		break;
 	case E_LVA:
 		lval_del(e->v.lva.a);
+		break;
+	case E_FUN:
+		argl_del(e->v.fun.l);
 		break;
 	}
 	free(e);
