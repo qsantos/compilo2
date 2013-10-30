@@ -122,5 +122,5 @@ static unsigned int hash(const char* str)
    unsigned int h = 1315423911;
    for (;*str;str++)
       h ^= ((h << 5) + (*str) + (h >> 2));
-   return h;
+   return h % N_BUCKETS;
 }
