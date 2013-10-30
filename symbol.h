@@ -11,8 +11,8 @@ typedef struct htable_t   htable_t;
 
 struct bucket_t
 {
-	const char* name;
-	bucket_t*   next;
+	char*     name;
+	bucket_t* next;
 
 	// stack
 	size_t      n;
@@ -28,8 +28,8 @@ struct htable_t
 void htable_init(htable_t* ht);
 void htable_del (htable_t* ht);
 
-symbol_t htable_push(const char* name);
-symbol_t htable_pop (const char* name);
-symbol_t htable_find(const char* name);
+symbol_t htable_push(htable_t* ht, const char* name);
+symbol_t htable_pop (htable_t* ht, const char* name);
+symbol_t htable_find(htable_t* ht, const char* name);
 
 #endif
