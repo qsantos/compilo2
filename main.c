@@ -2,11 +2,12 @@
 #include <stdio.h>
 
 #include "ast.h"
-#include "parser.h"
 #include "print.h"
 #include "symbol.h"
 
+extern int yyparse(void);
 ast_prgm_t* parsed = NULL;
+
 int main(void)
 {
 	if (yyparse() != 0)

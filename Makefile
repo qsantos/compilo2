@@ -8,10 +8,10 @@ all: $(TARGETS)
 compilo: main.o util.o ast.o print.o lexer.o parser.o htable.o symbol.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
-%.o: %.c parser.h
+%.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-%.c: %.l
+lexer.c: lexer.l parser.h
 	flex -o $@ $<
 
 %.c %.h: %.y
