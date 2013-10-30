@@ -171,3 +171,19 @@ void print_fnct(ast_fnct_t* f)
 	else
 		printf(";\n");
 }
+
+void print_fctl(ast_fctl_t* l)
+{
+	if (!l) return;
+	print_fnct(l->f);
+	if (l->l)
+	{
+		printf("\n");
+		print_fctl(l->l);
+	}
+}
+
+void print_prgm(ast_prgm_t* p)
+{
+	print_fctl(p->f);
+}

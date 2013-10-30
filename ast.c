@@ -322,3 +322,32 @@ void fnct_del(ast_fnct_t* f)
 		blck_del(f->c);
 	free(f);
 }
+
+ast_fctl_t* fctl_make(ast_fnct_t* f, ast_fctl_t* l)
+{
+	ast_fctl_t* ret = MALLOC(ast_fctl_t);
+	ret->f = f;
+	ret->l = l;
+	return ret;
+}
+
+void fctl_del(ast_fctl_t* l)
+{
+	fnct_del(l->f);
+	if (l->l)
+		fctl_del(l->l);
+	free(l);
+}
+
+ast_prgm_t* prgm_make(ast_fctl_t* f)
+{
+	ast_prgm_t* ret = MALLOC(ast_prgm_t);
+	ret->f = f;
+	return ret;
+}
+
+void prgm_del(ast_prgm_t* p)
+{
+	fctl_del(p->f);
+	free(p);
+}

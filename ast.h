@@ -12,6 +12,8 @@ typedef struct ast_stml_t ast_stml_t;
 typedef struct ast_blck_t ast_blck_t;
 typedef struct ast_dcll_t ast_dcll_t;
 typedef struct ast_fnct_t ast_fnct_t;
+typedef struct ast_fctl_t ast_fctl_t;
+typedef struct ast_prgm_t ast_prgm_t;
 
 
 
@@ -197,5 +199,28 @@ struct ast_fnct_t
 ast_fnct_t* fnct_make(ast_id_t n, ast_dcll_t* d, ast_type_t* r, ast_blck_t* c);
 
 void fnct_del(ast_fnct_t* f);
+
+
+
+struct ast_fctl_t
+{
+	ast_fnct_t* f;
+	ast_fctl_t* l;
+};
+
+ast_fctl_t* fctl_make(ast_fnct_t* f, ast_fctl_t* l);
+
+void fctl_del(ast_fctl_t* l);
+
+
+
+struct ast_prgm_t
+{
+	ast_fctl_t* f;
+};
+
+ast_prgm_t* prgm_make(ast_fctl_t* f);
+
+void prgm_del(ast_prgm_t* p);
 
 #endif

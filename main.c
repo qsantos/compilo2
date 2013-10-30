@@ -5,7 +5,7 @@
 #include "parser.h"
 #include "print.h"
 
-ast_fnct_t* parsed = NULL;
+ast_prgm_t* parsed = NULL;
 int main(void)
 {
 	if (yyparse() != 0)
@@ -14,7 +14,7 @@ int main(void)
 		exit(1);
 	}
 
-	print_fnct(parsed);
+	print_prgm(parsed);
 
 	return 0;
 }

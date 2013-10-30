@@ -4,7 +4,7 @@ void yyerror(char* s);
 #include <stdlib.h>
 #include <stdio.h>
 #include "ast.h"
-extern ast_fnct_t* parsed;
+extern ast_prgm_t* parsed;
 %}
 
 %union
@@ -21,6 +21,8 @@ extern ast_fnct_t* parsed;
 	ast_blck_t* b;
 	ast_dcll_t* d;
 	ast_fnct_t* f;
+	ast_fctl_t* y;
+	ast_prgm_t* p;
 }
 %start prgm
 %token CHAR INT
@@ -42,6 +44,9 @@ extern ast_fnct_t* parsed;
 %type  <b> blck
 %type  <d> dcll
 %type  <f> fcnt
+%type  <y> fctl
+%type  <p> prgm
+
 
 %%
 type:
@@ -108,7 +113,13 @@ fcnt:
   type id '(' dcll ')' blck      { $$ = fnct_make($2,$4,$1,$6);}
 ;
 
-prgm: fcnt { parsed = $1; };
+fctl:
+                                 { $$ = NULL;                  }
+| fcnt fctl                      { $$ = fctl_make($1, $2);     }
+;
+
+prgm: fctl { parsed = prgm_make($1); };
+
 %%
 extern int yylineno;
 void yyerror(char* s)

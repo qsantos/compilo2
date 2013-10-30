@@ -14,5 +14,7 @@ void print_stml(ast_stml_t* l);
 void print_blck(ast_blck_t* b);
 void print_dcll(ast_dcll_t* l);
 void print_fnct(ast_fnct_t* f);
+void print_fctl(ast_fctl_t* l);
+void print_prgm(ast_prgm_t* p);
 
 #endif
