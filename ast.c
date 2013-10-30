@@ -20,7 +20,7 @@ ast_type_t* type_int (void)
 	return ret;
 }
 
-ast_type_t* type_ptr (ast_type_t* p)
+ast_type_t* type_ptr(ast_type_t* p)
 {
 	ast_type_t* ret = MALLOC(ast_type_t);
 	ret->type = T_PTR;
@@ -51,11 +51,13 @@ void argl_del(ast_argl_t* l)
 	free(l);
 }
 
+extern int yylineno; // currently parsed line
 ast_lval_t* lval_var(ast_id_t v)
 {
 	ast_lval_t* ret = MALLOC(ast_lval_t);
 	ret->type = L_VAR;
 	ret->v.var.a = v;
+	ret->line = yylineno;
 	return ret;
 }
 

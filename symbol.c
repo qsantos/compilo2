@@ -72,7 +72,7 @@ static void aux_lval(ast_lval_t* l)
 	case L_VAR:
 		if (htable_find(&ht, l->v.var.a) == 0)
 		{
-			fprintf(stderr, "Symbol '%s' is not defined\n", l->v.var.a);
+			fprintf(stderr, "Symbol '%s' is not defined at line %i\n", l->v.var.a, l->line);
 			exit(1);
 		}
 		break;

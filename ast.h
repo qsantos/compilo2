@@ -48,6 +48,8 @@ struct ast_lval_t
 		struct { ast_id_t    a; } var;
 		struct { ast_expr_t* a; } exp;
 	} v;
+
+	int line;
 };
 
 ast_lval_t* lval_var(ast_id_t v);
