@@ -1,3 +1,6 @@
 *.o
 *.swp
 compilo
+lexer.c
+parser.h
+parser.c

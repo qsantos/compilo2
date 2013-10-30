@@ -100,6 +100,7 @@ void print_stmt(ast_stmt_t* s)
 		break;
 	case S_DEF:
 		print_decl(s->v.def.a);
+		break;
 	case S_IFT:
 		printf("if (");
 		print_expr(s->v.ift.c);

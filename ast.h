@@ -60,13 +60,8 @@ struct ast_expr_t
 	enum
 	{
 		E_IMM,
-		E_ADD,
-		E_SUB,
-		E_MUL,
-		E_DIV,
-		E_MOD,
-		E_INC,
-		E_DEC,
+		E_ADD, E_SUB, E_MUL, E_DIV, E_MOD,
+		E_INC, E_DEC,
 		E_LVA,
 		E_ASG,
 		E_FUN,
