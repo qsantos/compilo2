@@ -1,6 +1,7 @@
 #include "symbol.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "util.h"
 #include "htable.h"
@@ -69,7 +70,12 @@ static void aux_lval(ast_lval_t* l)
 	switch (l->type)
 	{
 	case L_VAR:
-	// TODO
+		if (htable_find(&ht, l->v.var.a) == 0)
+		{
+			fprintf(stderr, "Symbol '%s' is not defined\n", l->v.var.a);
+			exit(1);
+		}
+		break;
 	case L_DRF:
 		aux_expr(l->v.exp.a);
 		break;
