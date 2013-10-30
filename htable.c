@@ -49,9 +49,9 @@ static symbol_t bucket_append(bucket_t* b)
 		a_symbs = a_symbs ? 2*a_symbs : 1;
 		symbs = MREALLOC(symbs, const char*, a_symbs);
 	}
-	n_symbs++;
 	b->s[b->n++] = n_symbs;
 	symbs[n_symbs] = b->name;
+	n_symbs++;
 
 	return n_symbs;
 }
@@ -77,7 +77,7 @@ symbol_t htable_push(htable_t* ht, const char* name)
 	return bucket_append(c);
 }
 
-symbol_t htable_pop (htable_t* ht, const char* name)
+symbol_t htable_pop(htable_t* ht, const char* name)
 {
 	bucket_t** b = &ht->b[hash(name)];
 	while (*b && strcmp((*b)->name, name) != 0)
@@ -96,7 +96,9 @@ symbol_t htable_pop (htable_t* ht, const char* name)
 		return r;
 	}
 	else
-		return c->s[c->n--];
+	{
+		return c->s[--c->n];
+	}
 }
 
 symbol_t htable_find(htable_t* ht, const char* name)
@@ -109,12 +111,12 @@ symbol_t htable_find(htable_t* ht, const char* name)
 	if (!c)
 		return 0;
 
-	return c->s[c->n];
+	return c->s[c->n-1];
 }
 
 symbol_t htable_pop_symb(htable_t* ht, symbol_t s)
 {
-	return htable_pop(ht, symbs[s]);
+	return htable_pop(ht, symbs[s-1]);
 }
 
 static unsigned int hash(const char* str)

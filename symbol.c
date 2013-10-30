@@ -29,7 +29,7 @@ static symbol_t pop(void)
 	if (!n_stack)
 		return 0;
 
-	symbol_t ret = stack[n_stack--];
+	symbol_t ret = stack[--n_stack];
 	if (n_stack <= a_stack / 4)
 	{
 		a_stack /= 2;
