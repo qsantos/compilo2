@@ -5,7 +5,7 @@ TARGETS = compilo
 
 all: $(TARGETS)
 
-compilo: main.o util.o ast.o print.o lexer.o parser.o
+compilo: main.o util.o ast.o print.o lexer.o parser.o htable.o symbol.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
 %.o: %.c parser.h
