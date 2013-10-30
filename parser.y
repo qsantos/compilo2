@@ -11,7 +11,7 @@ extern ast_fnct_t* parsed;
 {
 	unsigned int i;
 	const char* s;
-	ast_type_t  t;
+	ast_type_t* t;
 	ast_lval_t* l;
 	ast_argl_t* a;
 	ast_expr_t* e;
@@ -26,6 +26,7 @@ extern ast_fnct_t* parsed;
 %token CHAR INT
 %token <i> integer
 %token <s> id
+%left STAR
 %left INC DEC
 %left '+' '-'
 %left '*' '/' '%'
@@ -44,13 +45,14 @@ extern ast_fnct_t* parsed;
 
 %%
 type:
-  CHAR                                { $$ = T_CHAR;                }
-| INT                                 { $$ = T_INT;                 }
+  CHAR                                { $$ = type_char();           }
+| INT                                 { $$ = type_int ();           }
+| type '*'                            { $$ = type_ptr ($1);         }
 ;
 
 lval:
   id                                  { $$ = lval_var($1);          }
-| '*' expr                            { $$ = lval_drf($2);          }
+| '*' expr %prec STAR                 { $$ = lval_drf($2);          }
 ;
 
 argl:

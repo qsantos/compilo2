@@ -5,6 +5,35 @@
 
 #include "util.h"
 
+ast_type_t* type_char(void)
+{
+	ast_type_t* ret = MALLOC(ast_type_t);
+	ret->type = T_CHAR;
+	ret->ptr  = NULL;
+	return ret;
+}
+ast_type_t* type_int (void)
+{
+	ast_type_t* ret = MALLOC(ast_type_t);
+	ret->type = T_INT;
+	ret->ptr  = NULL;
+	return ret;
+}
+
+ast_type_t* type_ptr (ast_type_t* p)
+{
+	ast_type_t* ret = MALLOC(ast_type_t);
+	ret->type = T_PTR;
+	ret->ptr  = p;
+	return ret;
+}
+
+void type_del(ast_type_t* t)
+{
+	if (t->ptr)
+		type_del(t->ptr);
+	free(t);
+}
 
 ast_argl_t* argl_make(ast_expr_t* a, ast_argl_t* l)
 {
@@ -135,7 +164,7 @@ void expr_del(ast_expr_t* e)
 	free(e);
 }
 
-ast_decl_t* decl_make(ast_type_t t, ast_id_t n)
+ast_decl_t* decl_make(ast_type_t* t, ast_id_t n)
 {
 	ast_decl_t* ret = MALLOC(ast_decl_t);
 	ret->t = t;
@@ -275,7 +304,7 @@ void dcll_del(ast_dcll_t* l)
 	free(l);
 }
 
-ast_fnct_t* fnct_make(ast_id_t n, ast_dcll_t* d, ast_type_t r, ast_blck_t* c)
+ast_fnct_t* fnct_make(ast_id_t n, ast_dcll_t* d, ast_type_t* r, ast_blck_t* c)
 {
 	ast_fnct_t* ret = MALLOC(ast_fnct_t);
 	ret->n = n;

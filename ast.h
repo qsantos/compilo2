@@ -2,6 +2,7 @@
 #define AST_H
 
 typedef const char*       ast_id_t;
+typedef struct ast_type_t ast_type_t;
 typedef struct ast_argl_t ast_argl_t;
 typedef struct ast_lval_t ast_lval_t;
 typedef struct ast_expr_t ast_expr_t;
@@ -14,11 +15,22 @@ typedef struct ast_fnct_t ast_fnct_t;
 
 
 
-typedef enum
+struct ast_type_t
 {
-	T_CHAR,
-	T_INT,
-} ast_type_t;
+	enum
+	{
+		T_CHAR,
+		T_INT,
+		T_PTR,
+	} type;
+	ast_type_t* ptr;
+};
+
+ast_type_t* type_char(void);
+ast_type_t* type_int (void);
+ast_type_t* type_ptr (ast_type_t* p);
+
+void type_del(ast_type_t* t);
 
 
 
@@ -98,11 +110,11 @@ void expr_del(ast_expr_t* e);
 
 struct ast_decl_t
 {
-	ast_type_t t;
-	ast_id_t   n;
+	ast_type_t* t;
+	ast_id_t    n;
 };
 
-ast_decl_t* decl_make(ast_type_t, ast_id_t n);
+ast_decl_t* decl_make(ast_type_t* t, ast_id_t n);
 
 void decl_del(ast_decl_t* d);
 
@@ -178,11 +190,11 @@ struct ast_fnct_t
 {
 	ast_id_t    n;
 	ast_dcll_t* d;
-	ast_type_t  r;
+	ast_type_t* r;
 	ast_blck_t* c;
 };
 
-ast_fnct_t* fnct_make(ast_id_t n, ast_dcll_t* d, ast_type_t r, ast_blck_t* c);
+ast_fnct_t* fnct_make(ast_id_t n, ast_dcll_t* d, ast_type_t* r, ast_blck_t* c);
 
 void fnct_del(ast_fnct_t* f);
 

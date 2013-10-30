@@ -2,9 +2,14 @@
 
 #include <stdio.h>
 
-void print_type(ast_type_t t)
+void print_id(ast_id_t n)
 {
-	switch (t)
+	printf("%s", n);
+}
+
+void print_type(ast_type_t* t)
+{
+	switch (t->type)
 	{
 	case T_CHAR:
 		printf("char");
@@ -12,12 +17,11 @@ void print_type(ast_type_t t)
 	case T_INT:
 		printf("int");
 		break;
+	case T_PTR:
+		print_type(t->ptr);
+		printf("*");
+		break;
 	}
-}
-
-void print_id(ast_id_t n)
-{
-	printf("%s", n);
 }
 
 void print_argl(ast_argl_t* l)
