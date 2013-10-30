@@ -4,6 +4,7 @@
 #include "ast.h"
 #include "parser.h"
 #include "print.h"
+#include "symbol.h"
 
 ast_prgm_t* parsed = NULL;
 int main(void)
@@ -15,6 +16,7 @@ int main(void)
 	}
 
 	print_prgm(parsed);
+	ast_analyze_symbols(parsed);
 
 	return 0;
 }
