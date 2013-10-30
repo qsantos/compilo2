@@ -120,6 +120,7 @@ EXPR_LVA(lva, E_LVA)
 ast_expr_t* expr_asg(ast_lval_t* a, ast_expr_t* b)
 {
 	ast_expr_t* ret = MALLOC(ast_expr_t);
+	ret->type = E_ASG;
 	ret->v.asg.a = a;
 	ret->v.asg.b = b;
 	return ret;
