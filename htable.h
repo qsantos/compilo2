@@ -1,5 +1,5 @@
-#ifndef SYMBOL_H
-#define SYMBOL_H
+#ifndef HTABLE_H
+#define HTABLE_H
 
 #define N_BUCKETS 1000
 
