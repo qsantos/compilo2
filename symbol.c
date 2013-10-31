@@ -6,16 +6,27 @@
 #include "util.h"
 #include "htable.h"
 
-static size_t       n_symbs = 0;
-static size_t       a_symbs = 0;
-static const char** symbs = NULL;
+// symbol table
+
+typedef struct syminfo_t syminfo_t;
+
+static void     push(symbol_t x);
+static symbol_t pop (void);
+
+struct syminfo_t
+{
+	const char* name;
+	ast_type_t* type;
+};
+
+static size_t     n_symbs = 0;
+static size_t     a_symbs = 0;
+static syminfo_t* symbs = NULL;
+
 
 static size_t    a_stack = 0;
 static size_t    n_stack = 0;
 static symbol_t* stack   = NULL;
-
-static void     push(symbol_t x);
-static symbol_t pop (void);
 
 htable_t ht;
 
@@ -49,24 +60,37 @@ static void scope_enter(void)
 	push(0);
 }
 
-static void scope_register(const char* name)
+static void scope_register(const char* name, ast_type_t* type)
 {
 	symbol_t s = htable_push(&ht, name);
+	push(s);
+
 	if (n_symbs == a_symbs)
 	{
 		a_symbs = a_symbs ? 2*a_symbs : 1;
-		symbs = MREALLOC(symbs, const char*, a_symbs);
+		symbs = MREALLOC(symbs, syminfo_t, a_symbs);
 	}
-	symbs[n_symbs++] = name;
-	push(s);
+	symbs[n_symbs].name = name;
+	symbs[n_symbs].type = type;
+	n_symbs++;
 }
 
 static void scope_exit(void)
 {
 	symbol_t s;
 	while ((s = pop()))
-		htable_pop(&ht, symbs[s-1]);
+		htable_pop(&ht, symbs[s-1].name);
 }
+
+
+
+
+
+
+
+
+
+// symbol checking
 
 static void aux_lval(ast_lval_t* l);
 static void aux_expr(ast_expr_t* e);
@@ -117,7 +141,7 @@ static void aux_expr(ast_expr_t* e)
 }
 static void aux_decl(ast_decl_t* d)
 {
-	scope_register(d->n);
+	scope_register(d->n, d->t);
 }
 static void aux_stmt(ast_stmt_t* s)
 {
@@ -167,7 +191,7 @@ static void aux_dcll(ast_dcll_t* l)
 }
 static void aux_fnct(ast_fnct_t* f)
 {
-	scope_register(f->n);
+//	scope_register(f->n); // TODO
 	scope_enter();
 	aux_dcll(f->d);
 	aux_blck(f->c);
