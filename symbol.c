@@ -142,6 +142,48 @@ static ast_type_t* aux_lval(ast_lval_t* l)
 	}
 	return NULL;
 }
+
+static void aux_check_argl(unsigned int n, ast_typl_t* t, ast_argl_t* a)
+{
+	if (a == NULL)
+	{
+		if (t != NULL)
+		{
+			fprintf(stderr, "Too few arguments\n");
+			error = true;
+		}
+		return;
+	}
+	if (t == NULL && a != NULL)
+	{
+		fprintf(stderr, "Too many arguments at line %u\n", a->a->line);
+		error = true;
+		return;
+	}
+
+	if (!type_eq(t->t, aux_expr(a->a)))
+	{
+		fprintf(stderr, "Argument no %u is not of the right type at line %u\n", n, a->a->line);
+		error = true;
+		return;
+	}
+
+	if (t->l == NULL && a->l != NULL)
+	{
+		fprintf(stderr, "Too many arguments at line %u\n", a->a->line);
+		error = true;
+		return;
+	}
+
+	if (t->l != NULL && a->l == NULL)
+	{
+		fprintf(stderr, "Too few arguments at line %u\n", a->a->line);
+		error = true;
+		return;
+	}
+
+	aux_check_argl(n+1, t->l, a->l);
+}
 static ast_type_t* aux_expr(ast_expr_t* e)
 {
 	ast_type_t* a;
@@ -184,7 +226,7 @@ static ast_type_t* aux_expr(ast_expr_t* e)
 		}
 		else
 			return a;
-	case E_FUN: // TODO
+	case E_FUN:
 		s = htable_find(&ht, e->v.fun.n);
 		if (s == 0)
 		{
@@ -192,11 +234,15 @@ static ast_type_t* aux_expr(ast_expr_t* e)
 			error = true;
 			return NULL;
 		}
-		else
+		a = symbs[s-1].type;
+		if (a->type != T_FUN)
 		{
+			fprintf(stderr, "Symbol '%s' is not a function at line %i\n", e->v.fun.n, e->line);
+			error = true;
 			return NULL;
 		}
-		break;
+		aux_check_argl(1, a->v.fun.l, e->v.fun.l);
+		return a->v.fun.r;
 	}
 	return NULL;
 }
