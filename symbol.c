@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "util.h"
 #include "htable.h"
@@ -92,6 +93,8 @@ static void scope_exit(void)
 
 // type checking
 
+extern bool error;
+
 static ast_type_t* aux_lval(ast_lval_t* l);
 static ast_type_t* aux_expr(ast_expr_t* e);
 static void        aux_stmt(ast_stmt_t* s);
@@ -110,7 +113,7 @@ static ast_type_t* aux_lval(ast_lval_t* l)
 		if (s == 0)
 		{
 			fprintf(stderr, "Symbol '%s' is not defined at line %i\n", l->v.var.a, l->line);
-			exit(1);
+			error = true;
 			return NULL;
 		}
 		else
@@ -119,10 +122,14 @@ static ast_type_t* aux_lval(ast_lval_t* l)
 	case L_DRF:
 	{
 		ast_type_t* t = aux_expr(l->v.exp.a);
-		if (!t || t->type != T_PTR)
+		if (!t)
+		{
+			return NULL;
+		}
+		else if (t->type != T_PTR)
 		{
 			fprintf(stderr, "Cannot dereference expression at line %i\n", l->line);
-			exit(1);
+			error = true;
 			return NULL;
 		}
 		else
