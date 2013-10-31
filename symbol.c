@@ -93,6 +93,7 @@ static void scope_exit(void)
 // type checking
 
 extern bool error;
+static ast_type_t local_int = {T_INT, NULL};
 
 static ast_type_t* aux_lval(ast_lval_t* l);
 static ast_type_t* aux_expr(ast_expr_t* e);
@@ -104,11 +105,13 @@ static void        aux_fctl(ast_fctl_t* l);
 
 static ast_type_t* aux_lval(ast_lval_t* l)
 {
+	ast_type_t* t;
+	symbol_t    s;
 	switch (l->type)
 	{
 	case L_VAR:
 	{
-		symbol_t s = htable_find(&ht, l->v.var.a);
+		s = htable_find(&ht, l->v.var.a);
 		if (s == 0)
 		{
 			fprintf(stderr, "Symbol '%s' is not defined at line %i\n", l->v.var.a, l->line);
@@ -116,11 +119,13 @@ static ast_type_t* aux_lval(ast_lval_t* l)
 			return NULL;
 		}
 		else
+		{
 			return symbs[s-1].type;
+		}
 	}
 	case L_DRF:
 	{
-		ast_type_t* t = aux_expr(l->v.exp.a);
+		t = aux_expr(l->v.exp.a);
 		if (!t)
 		{
 			return NULL;
@@ -139,24 +144,58 @@ static ast_type_t* aux_lval(ast_lval_t* l)
 }
 static ast_type_t* aux_expr(ast_expr_t* e)
 {
+	ast_type_t* a;
+	ast_type_t* b;
+	symbol_t    s;
 	switch (e->type)
 	{
 	case E_IMM:
-		break;
+		return &local_int;
 	case E_ADD: case E_SUB: case E_MUL: case E_DIV: case E_MOD:
-		aux_expr(e->v.bin.a);
-		aux_expr(e->v.bin.a);
-		break;
+		a = aux_expr(e->v.bin.a);
+		b = aux_expr(e->v.bin.b);
+		if (!a || !b)
+		{
+			return NULL;
+		}
+		else if (!type_eq(a,b))
+		{
+			fprintf(stderr, "Binary operation on different types at line %i\n", e->line);
+			error = true;
+			return NULL;
+		}
+		else
+			return a;
 	case E_INC: case E_DEC:
 	case E_LVA:
-		aux_lval(e->v.lva.a);
-		break;
+		return aux_lval(e->v.lva.a);
 	case E_ASG:
-		aux_lval(e->v.asg.a);
-		aux_expr(e->v.asg.b);
-		break;
-	case E_FUN:
-	// TODO
+		a = aux_lval(e->v.asg.a);
+		b = aux_expr(e->v.asg.b);
+		if (!a || !b)
+		{
+			return NULL;
+		}
+		else if (!type_eq(a,b))
+		{
+			fprintf(stderr, "Assigment on different types at line %i\n", e->line);
+			error = true;
+			return NULL;
+		}
+		else
+			return a;
+	case E_FUN: // TODO
+		s = htable_find(&ht, e->v.fun.n);
+		if (s == 0)
+		{
+			fprintf(stderr, "Unknown function '%s' at line %i\n", e->v.fun.n, e->line);
+			error = true;
+			return NULL;
+		}
+		else
+		{
+			return NULL;
+		}
 		break;
 	}
 	return NULL;
