@@ -1,6 +1,8 @@
 #ifndef AST_H
 #define AST_H
 
+#include <stdbool.h>
+
 typedef const char*       ast_id_t;
 typedef struct ast_type_t ast_type_t;
 typedef struct ast_argl_t ast_argl_t;
@@ -33,6 +35,8 @@ ast_type_t* type_int (void);
 ast_type_t* type_ptr (ast_type_t* p);
 
 void type_del(ast_type_t* t);
+
+bool type_eq(ast_type_t* a, ast_type_t* b);
 
 
 

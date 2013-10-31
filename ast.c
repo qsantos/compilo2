@@ -37,6 +37,14 @@ void type_del(ast_type_t* t)
 	free(t);
 }
 
+bool type_eq(ast_type_t* a, ast_type_t* b)
+{
+	if (a->type != b->type)
+		return false;
+
+	return a->ptr == NULL || type_eq(a->ptr, b->ptr);
+}
+
 ast_argl_t* argl_make(ast_expr_t* a, ast_argl_t* l)
 {
 	ast_argl_t* ret = MALLOC(ast_argl_t);
