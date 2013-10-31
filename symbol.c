@@ -6,9 +6,14 @@
 #include "util.h"
 #include "htable.h"
 
+static size_t       n_symbs = 0;
+static size_t       a_symbs = 0;
+static const char** symbs = NULL;
+
 static size_t    a_stack = 0;
 static size_t    n_stack = 0;
 static symbol_t* stack   = NULL;
+
 static void     push(symbol_t x);
 static symbol_t pop (void);
 
@@ -47,6 +52,12 @@ static void scope_enter(void)
 static void scope_register(const char* name)
 {
 	symbol_t s = htable_push(&ht, name);
+	if (n_symbs == a_symbs)
+	{
+		a_symbs = a_symbs ? 2*a_symbs : 1;
+		symbs = MREALLOC(symbs, const char*, a_symbs);
+	}
+	symbs[n_symbs++] = name;
 	push(s);
 }
 
@@ -54,7 +65,7 @@ static void scope_exit(void)
 {
 	symbol_t s;
 	while ((s = pop()))
-		htable_pop_symb(&ht, s);
+		htable_pop(&ht, symbs[s-1]);
 }
 
 static void aux_lval(ast_lval_t* l);
