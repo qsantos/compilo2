@@ -28,7 +28,7 @@ static size_t    a_stack = 0;
 static size_t    n_stack = 0;
 static symbol_t* stack   = NULL;
 
-htable_t ht;
+static htable_t ht;
 
 static void push(symbol_t x)
 {
