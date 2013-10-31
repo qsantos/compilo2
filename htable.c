@@ -5,10 +5,6 @@
 
 #include "util.h"
 
-static size_t       n_symbs = 0;
-static size_t       a_symbs = 0;
-static const char** symbs = NULL;
-
 static unsigned int hash(const char* str);
 
 void htable_init(htable_t* ht)
@@ -38,22 +34,15 @@ void htable_del(htable_t* ht)
 
 static symbol_t bucket_append(bucket_t* b)
 {
+	static unsigned int cursymbol = 0;
+
 	if (b->a == b->n)
 	{
 		b->a <<= 1;
 		b->s = MREALLOC(b->s, symbol_t, b->a);
 	}
 
-	if (n_symbs == a_symbs)
-	{
-		a_symbs = a_symbs ? 2*a_symbs : 1;
-		symbs = MREALLOC(symbs, const char*, a_symbs);
-	}
-	b->s[b->n++] = n_symbs;
-	symbs[n_symbs] = b->name;
-	n_symbs++;
-
-	return n_symbs;
+	return (b->s[b->n++] = ++cursymbol);
 }
 symbol_t htable_push(htable_t* ht, const char* name)
 {
@@ -112,11 +101,6 @@ symbol_t htable_find(htable_t* ht, const char* name)
 		return 0;
 
 	return c->s[c->n-1];
-}
-
-symbol_t htable_pop_symb(htable_t* ht, symbol_t s)
-{
-	return htable_pop(ht, symbs[s-1]);
 }
 
 static unsigned int hash(const char* str)

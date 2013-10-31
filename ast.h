@@ -1,8 +1,11 @@
 #ifndef AST_H
 #define AST_H
 
+#include <stdbool.h>
+
 typedef const char*       ast_id_t;
 typedef struct ast_type_t ast_type_t;
+typedef struct ast_typl_t ast_typl_t;
 typedef struct ast_argl_t ast_argl_t;
 typedef struct ast_lval_t ast_lval_t;
 typedef struct ast_expr_t ast_expr_t;
@@ -24,15 +27,37 @@ struct ast_type_t
 		T_CHAR,
 		T_INT,
 		T_PTR,
+		T_FUN,
 	} type;
-	ast_type_t* ptr;
+	union
+	{
+		struct { ast_type_t* a;                } ptr;
+		struct { ast_type_t* r; ast_typl_t* l; } fun;
+	} v;
 };
 
 ast_type_t* type_char(void);
 ast_type_t* type_int (void);
 ast_type_t* type_ptr (ast_type_t* p);
+ast_type_t* type_fun (ast_type_t* r, ast_typl_t* l);
 
 void type_del(ast_type_t* t);
+
+bool type_eq(ast_type_t* a, ast_type_t* b);
+
+
+
+struct ast_typl_t
+{
+	ast_type_t* t;
+	ast_typl_t* l;
+};
+
+ast_typl_t* typl_make(ast_type_t* t, ast_typl_t* l);
+
+void typl_del(ast_typl_t* l);
+
+bool typl_eq(ast_typl_t* a, ast_typl_t* b);
 
 
 
@@ -90,6 +115,8 @@ struct ast_expr_t
 		struct { ast_lval_t* a; ast_expr_t* b; } asg;
 		struct { ast_id_t    n; ast_argl_t* l; } fun;
 	} v;
+
+	int line;
 };
 
 ast_expr_t* expr_imm(unsigned int v);

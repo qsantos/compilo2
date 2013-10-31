@@ -32,6 +32,4 @@ symbol_t htable_push(htable_t* ht, const char* name);
 symbol_t htable_pop (htable_t* ht, const char* name);
 symbol_t htable_find(htable_t* ht, const char* name);
 
-symbol_t htable_pop_symb(htable_t* ht, symbol_t s);
-
 #endif

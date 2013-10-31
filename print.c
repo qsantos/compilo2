@@ -18,9 +18,25 @@ void print_type(ast_type_t* t)
 		printf("int");
 		break;
 	case T_PTR:
-		print_type(t->ptr);
+		print_type(t->v.ptr.a);
 		printf("*");
 		break;
+	case T_FUN:
+		print_type(t->v.fun.r);
+		printf("(");
+		print_typl(t->v.fun.l);
+		printf(")");
+	}
+}
+
+void print_typl(ast_typl_t* l)
+{
+	if (!l) return;
+	print_type(l->t);
+	if (l->l)
+	{
+		printf(", ");
+		print_typl(l->l);
 	}
 }
 
