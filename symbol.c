@@ -90,33 +90,48 @@ static void scope_exit(void)
 
 
 
-// symbol checking
+// type checking
 
-static void aux_lval(ast_lval_t* l);
-static void aux_expr(ast_expr_t* e);
-static void aux_stmt(ast_stmt_t* s);
-static void aux_stml(ast_stml_t* l);
-static void aux_blck(ast_blck_t* b);
-static void aux_fnct(ast_fnct_t* f);
-static void aux_fctl(ast_fctl_t* l);
+static ast_type_t* aux_lval(ast_lval_t* l);
+static ast_type_t* aux_expr(ast_expr_t* e);
+static void        aux_stmt(ast_stmt_t* s);
+static void        aux_stml(ast_stml_t* l);
+static void        aux_blck(ast_blck_t* b);
+static void        aux_fnct(ast_fnct_t* f);
+static void        aux_fctl(ast_fctl_t* l);
 
-static void aux_lval(ast_lval_t* l)
+static ast_type_t* aux_lval(ast_lval_t* l)
 {
 	switch (l->type)
 	{
 	case L_VAR:
-		if (htable_find(&ht, l->v.var.a) == 0)
+	{
+		symbol_t s = htable_find(&ht, l->v.var.a);
+		if (s == 0)
 		{
 			fprintf(stderr, "Symbol '%s' is not defined at line %i\n", l->v.var.a, l->line);
 			exit(1);
+			return NULL;
 		}
-		break;
-	case L_DRF:
-		aux_expr(l->v.exp.a);
-		break;
+		else
+			return symbs[s-1].type;
 	}
+	case L_DRF:
+	{
+		ast_type_t* t = aux_expr(l->v.exp.a);
+		if (!t || t->type != T_PTR)
+		{
+			fprintf(stderr, "Cannot dereference expression at line %i\n", l->line);
+			exit(1);
+			return NULL;
+		}
+		else
+			return t->ptr;
+	}
+	}
+	return NULL;
 }
-static void aux_expr(ast_expr_t* e)
+static ast_type_t* aux_expr(ast_expr_t* e)
 {
 	switch (e->type)
 	{
@@ -138,6 +153,7 @@ static void aux_expr(ast_expr_t* e)
 	// TODO
 		break;
 	}
+	return NULL;
 }
 static void aux_decl(ast_decl_t* d)
 {
