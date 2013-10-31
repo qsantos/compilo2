@@ -90,6 +90,8 @@ struct ast_expr_t
 		struct { ast_lval_t* a; ast_expr_t* b; } asg;
 		struct { ast_id_t    n; ast_argl_t* l; } fun;
 	} v;
+
+	int line;
 };
 
 ast_expr_t* expr_imm(unsigned int v);

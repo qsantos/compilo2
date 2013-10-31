@@ -5,6 +5,8 @@
 
 #include "util.h"
 
+extern int yylineno; // currently parsed line
+
 ast_type_t* type_char(void)
 {
 	ast_type_t* ret = MALLOC(ast_type_t);
@@ -51,7 +53,6 @@ void argl_del(ast_argl_t* l)
 	free(l);
 }
 
-extern int yylineno; // currently parsed line
 ast_lval_t* lval_var(ast_id_t v)
 {
 	ast_lval_t* ret = MALLOC(ast_lval_t);
@@ -66,6 +67,7 @@ ast_lval_t* lval_drf(ast_expr_t* e)
 	ast_lval_t* ret = MALLOC(ast_lval_t);
 	ret->type = L_DRF;
 	ret->v.exp.a = e;
+	ret->line = yylineno;
 	return ret;
 }
 
@@ -87,6 +89,7 @@ ast_expr_t* expr_imm(unsigned int v)
 	ast_expr_t* ret = MALLOC(ast_expr_t);
 	ret->type = E_IMM;
 	ret->v.imm.v = v;
+	ret->line = yylineno;
 	return ret;
 }
 
@@ -97,6 +100,7 @@ ast_expr_t* expr_##N(ast_expr_t* a, ast_expr_t* b) \
 	ret->type = C; \
 	ret->v.bin.a = a; \
 	ret->v.bin.b = b; \
+	ret->line = yylineno; \
 	return ret; \
 } \
 
@@ -112,6 +116,7 @@ ast_expr_t* expr_##N(ast_lval_t* a) \
 	ast_expr_t* ret = MALLOC(ast_expr_t); \
 	ret->type = C; \
 	ret->v.lva.a = a; \
+	ret->line = yylineno; \
 	return ret; \
 } \
 
@@ -125,6 +130,7 @@ ast_expr_t* expr_asg(ast_lval_t* a, ast_expr_t* b)
 	ret->type = E_ASG;
 	ret->v.asg.a = a;
 	ret->v.asg.b = b;
+	ret->line = yylineno;
 	return ret;
 }
 
@@ -134,6 +140,7 @@ ast_expr_t* expr_fun(ast_id_t n, ast_argl_t* l)
 	ret->type = E_FUN;
 	ret->v.fun.n = n;
 	ret->v.fun.l = l;
+	ret->line = yylineno;
 	return ret;
 }
 
