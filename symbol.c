@@ -250,9 +250,16 @@ static void aux_dcll(ast_dcll_t* l)
 	aux_decl(l->d);
 	aux_dcll(l->l);
 }
+static ast_typl_t* aux_fnct_dcll2typl(ast_dcll_t* d)
+{
+	if (!d) return NULL;
+	return typl_make(d->d->t, aux_fnct_dcll2typl(d->l));
+}
 static void aux_fnct(ast_fnct_t* f)
 {
-//	scope_register(f->n); // TODO
+	ast_type_t* t = type_fun(f->r, aux_fnct_dcll2typl(f->d));
+	scope_register(f->n, t);
+
 	scope_enter();
 	aux_dcll(f->d);
 	aux_blck(f->c);
