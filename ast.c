@@ -11,14 +11,12 @@ ast_type_t* type_char(void)
 {
 	ast_type_t* ret = MALLOC(ast_type_t);
 	ret->type = T_CHAR;
-	ret->ptr  = NULL;
 	return ret;
 }
 ast_type_t* type_int (void)
 {
 	ast_type_t* ret = MALLOC(ast_type_t);
 	ret->type = T_INT;
-	ret->ptr  = NULL;
 	return ret;
 }
 
@@ -26,14 +24,34 @@ ast_type_t* type_ptr(ast_type_t* p)
 {
 	ast_type_t* ret = MALLOC(ast_type_t);
 	ret->type = T_PTR;
-	ret->ptr  = p;
+	ret->v.ptr.a = p;
+	return ret;
+}
+
+ast_type_t* type_fun(ast_type_t* r, ast_typl_t* l)
+{
+	ast_type_t* ret = MALLOC(ast_type_t);
+	ret->type = T_FUN;
+	ret->v.fun.r = r;
+	ret->v.fun.l = l;
 	return ret;
 }
 
 void type_del(ast_type_t* t)
 {
-	if (t->ptr)
-		type_del(t->ptr);
+	switch (t->type)
+	{
+	case T_CHAR:
+	case T_INT:
+		break;
+	case T_PTR:
+		type_del(t->v.ptr.a);
+		break;
+	case T_FUN:
+		type_del(t->v.fun.r);
+		typl_del(t->v.fun.l);
+		break;
+	}
 	free(t);
 }
 
@@ -42,7 +60,42 @@ bool type_eq(ast_type_t* a, ast_type_t* b)
 	if (a->type != b->type)
 		return false;
 
-	return a->ptr == NULL || type_eq(a->ptr, b->ptr);
+	switch (a->type)
+	{
+	case T_CHAR:
+	case T_INT:
+		return true;
+	case T_PTR:
+		return type_eq(a->v.ptr.a, b->v.ptr.a);
+	case T_FUN:
+		return type_eq(a->v.fun.r, b->v.fun.r) &&
+			typl_eq(a->v.fun.l, b->v.fun.l);
+	}
+	return false;
+}
+
+ast_typl_t* typl_make(ast_type_t* t, ast_typl_t* l)
+{
+	ast_typl_t* ret = MALLOC(ast_typl_t);
+	ret->t = t;
+	ret->l = l;
+	return ret;
+}
+
+void typl_del(ast_typl_t* l)
+{
+	type_del(l->t);
+	if (l->l)
+		typl_del(l->l);
+	free(l);
+}
+
+bool typl_eq(ast_typl_t* a, ast_typl_t* b)
+{
+	if ( (a->l == NULL) != (b->l == NULL) )
+		return false;
+
+	return type_eq(a->t, b->t) && (a->l == NULL || typl_eq(a->l, b->l));
 }
 
 ast_argl_t* argl_make(ast_expr_t* a, ast_argl_t* l)

@@ -93,7 +93,7 @@ static void scope_exit(void)
 // type checking
 
 extern bool error;
-static ast_type_t local_int = {T_INT, NULL};
+static ast_type_t local_int = {T_INT, { { NULL } } };
 
 static ast_type_t* aux_lval(ast_lval_t* l);
 static ast_type_t* aux_expr(ast_expr_t* e);
@@ -137,7 +137,7 @@ static ast_type_t* aux_lval(ast_lval_t* l)
 			return NULL;
 		}
 		else
-			return t->ptr;
+			return t->v.ptr.a;
 	}
 	}
 	return NULL;

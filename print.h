@@ -5,6 +5,7 @@
 
 void print_id  (ast_id_t    n);
 void print_type(ast_type_t* t);
+void print_typl(ast_typl_t* l);
 void print_argl(ast_argl_t* l);
 void print_lval(ast_lval_t* l);
 void print_expr(ast_expr_t* e);
