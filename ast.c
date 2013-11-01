@@ -25,13 +25,20 @@
 
 extern int yylineno; // currently parsed line
 
+
+
+
+
+
+// BEGIN constructors
+
 ast_type_t* type_char(void)
 {
 	ast_type_t* ret = MALLOC(ast_type_t);
 	ret->type = T_CHAR;
 	return ret;
 }
-ast_type_t* type_int (void)
+ast_type_t* type_int(void)
 {
 	ast_type_t* ret = MALLOC(ast_type_t);
 	ret->type = T_INT;
@@ -55,43 +62,6 @@ ast_type_t* type_fun(ast_type_t* r, ast_typl_t* l)
 	return ret;
 }
 
-void type_del(ast_type_t* t)
-{
-	switch (t->type)
-	{
-	case T_CHAR:
-	case T_INT:
-		break;
-	case T_PTR:
-		type_del(t->v.ptr.a);
-		break;
-	case T_FUN:
-		type_del(t->v.fun.r);
-		typl_del(t->v.fun.l);
-		break;
-	}
-	free(t);
-}
-
-bool type_eq(ast_type_t* a, ast_type_t* b)
-{
-	if (a->type != b->type)
-		return false;
-
-	switch (a->type)
-	{
-	case T_CHAR:
-	case T_INT:
-		return true;
-	case T_PTR:
-		return type_eq(a->v.ptr.a, b->v.ptr.a);
-	case T_FUN:
-		return type_eq(a->v.fun.r, b->v.fun.r) &&
-			typl_eq(a->v.fun.l, b->v.fun.l);
-	}
-	return false;
-}
-
 ast_typl_t* typl_make(ast_type_t* t, ast_typl_t* l)
 {
 	ast_typl_t* ret = MALLOC(ast_typl_t);
@@ -100,36 +70,12 @@ ast_typl_t* typl_make(ast_type_t* t, ast_typl_t* l)
 	return ret;
 }
 
-void typl_del(ast_typl_t* l)
-{
-	type_del(l->t);
-	if (l->l)
-		typl_del(l->l);
-	free(l);
-}
-
-bool typl_eq(ast_typl_t* a, ast_typl_t* b)
-{
-	if ( (a->l == NULL) != (b->l == NULL) )
-		return false;
-
-	return type_eq(a->t, b->t) && (a->l == NULL || typl_eq(a->l, b->l));
-}
-
 ast_argl_t* argl_make(ast_expr_t* a, ast_argl_t* l)
 {
 	ast_argl_t* ret = MALLOC(ast_argl_t);
 	ret->a = a;
 	ret->l = l;
 	return ret;
-}
-
-void argl_del(ast_argl_t* l)
-{
-	expr_del(l->a);
-	if (l->l)
-		argl_del(l->l);
-	free(l);
 }
 
 ast_lval_t* lval_var(ast_id_t v)
@@ -148,19 +94,6 @@ ast_lval_t* lval_drf(ast_expr_t* e)
 	ret->v.exp.a = e;
 	ret->line = yylineno;
 	return ret;
-}
-
-void lval_del(ast_lval_t* l)
-{
-	switch (l->type)
-	{
-	case L_VAR:
-		break;
-	case L_DRF:
-		expr_del(l->v.exp.a);
-		break;
-	}
-	free(l);
 }
 
 ast_expr_t* expr_imm(unsigned int v)
@@ -223,47 +156,12 @@ ast_expr_t* expr_fun(ast_id_t n, ast_argl_t* l)
 	return ret;
 }
 
-void expr_del(ast_expr_t* e)
-{
-	switch (e->type)
-	{
-	case E_IMM:
-		break;
-	case E_ADD:
-	case E_SUB:
-	case E_MUL:
-	case E_DIV:
-	case E_MOD:
-		expr_del(e->v.bin.a);
-		expr_del(e->v.bin.b);
-		break;
-	case E_INC:
-	case E_DEC:
-	case E_LVA:
-		lval_del(e->v.lva.a);
-		break;
-	case E_ASG:
-		lval_del(e->v.asg.a);
-		expr_del(e->v.asg.b);
-		break;
-	case E_FUN:
-		argl_del(e->v.fun.l);
-		break;
-	}
-	free(e);
-}
-
 ast_decl_t* decl_make(ast_type_t* t, ast_id_t n)
 {
 	ast_decl_t* ret = MALLOC(ast_decl_t);
 	ret->t = t;
 	ret->n = n;
 	return ret;
-}
-
-void decl_del(ast_decl_t* d)
-{
-	free(d);
 }
 
 ast_stmt_t* stmt_blck(ast_blck_t* b)
@@ -318,6 +216,145 @@ ast_stmt_t* stmt_whil(ast_expr_t* c, ast_stmt_t* a)
 	return ret;
 }
 
+ast_stml_t* stml_make(ast_stmt_t* s, ast_stml_t* l)
+{
+	ast_stml_t* ret = MALLOC(ast_stml_t);
+	ret->s = s;
+	ret->l = l;
+	return ret;
+}
+
+ast_blck_t* blck_make(ast_stml_t* l)
+{
+	ast_blck_t* ret = MALLOC(ast_blck_t);
+	ret->l = l;
+	return ret;
+}
+
+ast_dcll_t* dcll_make(ast_decl_t* d, ast_dcll_t* l)
+{
+	ast_dcll_t* ret = MALLOC(ast_dcll_t);
+	ret->d = d;
+	ret->l = l;
+	return ret;
+}
+
+ast_fnct_t* fnct_make(ast_id_t n, ast_dcll_t* d, ast_type_t* r, ast_blck_t* c)
+{
+	ast_fnct_t* ret = MALLOC(ast_fnct_t);
+	ret->n = n;
+	ret->d = d;
+	ret->r = r;
+	ret->c = c;
+	return ret;
+}
+
+ast_fctl_t* fctl_make(ast_fnct_t* f, ast_fctl_t* l)
+{
+	ast_fctl_t* ret = MALLOC(ast_fctl_t);
+	ret->f = f;
+	ret->l = l;
+	return ret;
+}
+
+ast_prgm_t* prgm_make(ast_fctl_t* f)
+{
+	ast_prgm_t* ret = MALLOC(ast_prgm_t);
+	ret->f = f;
+	return ret;
+}
+
+// END constructors
+
+
+
+
+
+
+// BEGIN destructors
+
+void type_del(ast_type_t* t)
+{
+	switch (t->type)
+	{
+	case T_CHAR:
+	case T_INT:
+		break;
+	case T_PTR:
+		type_del(t->v.ptr.a);
+		break;
+	case T_FUN:
+		type_del(t->v.fun.r);
+		typl_del(t->v.fun.l);
+		break;
+	}
+	free(t);
+}
+
+void typl_del(ast_typl_t* l)
+{
+	type_del(l->t);
+	if (l->l)
+		typl_del(l->l);
+	free(l);
+}
+
+void argl_del(ast_argl_t* l)
+{
+	expr_del(l->a);
+	if (l->l)
+		argl_del(l->l);
+	free(l);
+}
+
+void lval_del(ast_lval_t* l)
+{
+	switch (l->type)
+	{
+	case L_VAR:
+		break;
+	case L_DRF:
+		expr_del(l->v.exp.a);
+		break;
+	}
+	free(l);
+}
+
+void expr_del(ast_expr_t* e)
+{
+	switch (e->type)
+	{
+	case E_IMM:
+		break;
+	case E_ADD:
+	case E_SUB:
+	case E_MUL:
+	case E_DIV:
+	case E_MOD:
+		expr_del(e->v.bin.a);
+		expr_del(e->v.bin.b);
+		break;
+	case E_INC:
+	case E_DEC:
+	case E_LVA:
+		lval_del(e->v.lva.a);
+		break;
+	case E_ASG:
+		lval_del(e->v.asg.a);
+		expr_del(e->v.asg.b);
+		break;
+	case E_FUN:
+		argl_del(e->v.fun.l);
+		break;
+	}
+	free(e);
+}
+
+void decl_del(ast_decl_t* d)
+{
+	free(d);
+}
+
 void stmt_del(ast_stmt_t* s)
 {
 	switch (s->type)
@@ -348,14 +385,6 @@ void stmt_del(ast_stmt_t* s)
 	free(s);
 }
 
-ast_stml_t* stml_make(ast_stmt_t* s, ast_stml_t* l)
-{
-	ast_stml_t* ret = MALLOC(ast_stml_t);
-	ret->s = s;
-	ret->l = l;
-	return ret;
-}
-
 void stml_del(ast_stml_t* l)
 {
 	stmt_del(l->s);
@@ -364,25 +393,10 @@ void stml_del(ast_stml_t* l)
 	free(l);
 }
 
-ast_blck_t* blck_make(ast_stml_t* l)
-{
-	ast_blck_t* ret = MALLOC(ast_blck_t);
-	ret->l = l;
-	return ret;
-}
-
 void blck_del(ast_blck_t* b)
 {
 	stml_del(b->l);
 	free(b);
-}
-
-ast_dcll_t* dcll_make(ast_decl_t* d, ast_dcll_t* l)
-{
-	ast_dcll_t* ret = MALLOC(ast_dcll_t);
-	ret->d = d;
-	ret->l = l;
-	return ret;
 }
 
 void dcll_del(ast_dcll_t* l)
@@ -393,30 +407,12 @@ void dcll_del(ast_dcll_t* l)
 	free(l);
 }
 
-ast_fnct_t* fnct_make(ast_id_t n, ast_dcll_t* d, ast_type_t* r, ast_blck_t* c)
-{
-	ast_fnct_t* ret = MALLOC(ast_fnct_t);
-	ret->n = n;
-	ret->d = d;
-	ret->r = r;
-	ret->c = c;
-	return ret;
-}
-
 void fnct_del(ast_fnct_t* f)
 {
 	dcll_del(f->d);
 	if (f->c)
 		blck_del(f->c);
 	free(f);
-}
-
-ast_fctl_t* fctl_make(ast_fnct_t* f, ast_fctl_t* l)
-{
-	ast_fctl_t* ret = MALLOC(ast_fctl_t);
-	ret->f = f;
-	ret->l = l;
-	return ret;
 }
 
 void fctl_del(ast_fctl_t* l)
@@ -427,15 +423,46 @@ void fctl_del(ast_fctl_t* l)
 	free(l);
 }
 
-ast_prgm_t* prgm_make(ast_fctl_t* f)
-{
-	ast_prgm_t* ret = MALLOC(ast_prgm_t);
-	ret->f = f;
-	return ret;
-}
-
 void prgm_del(ast_prgm_t* p)
 {
 	fctl_del(p->f);
 	free(p);
 }
+
+// END destructors
+
+
+
+
+
+
+// BEGIN methods
+
+bool type_eq(ast_type_t* a, ast_type_t* b)
+{
+	if (a->type != b->type)
+		return false;
+
+	switch (a->type)
+	{
+	case T_CHAR:
+	case T_INT:
+		return true;
+	case T_PTR:
+		return type_eq(a->v.ptr.a, b->v.ptr.a);
+	case T_FUN:
+		return type_eq(a->v.fun.r, b->v.fun.r) &&
+			typl_eq(a->v.fun.l, b->v.fun.l);
+	}
+	return false;
+}
+
+bool typl_eq(ast_typl_t* a, ast_typl_t* b)
+{
+	if ( (a->l == NULL) != (b->l == NULL) )
+		return false;
+
+	return type_eq(a->t, b->t) && (a->l == NULL || typl_eq(a->l, b->l));
+}
+
+// END methods
