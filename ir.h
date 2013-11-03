@@ -28,7 +28,7 @@ typedef struct ir_prgm_t  ir_prgm_t;
 
 typedef enum
 {
-	O_IM,  O_IMADDR,
+	O_IMM, O_IMMADDR,
 	O_REG, O_REGADDR,
 } ir_atype_t;
 
