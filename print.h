@@ -20,6 +20,7 @@
 #define PRINT_H
 
 #include "ast.h"
+#include "ir.h"
 
 void print_id  (ast_id_t    n);
 void print_type(ast_type_t* t);
@@ -35,5 +36,7 @@ void print_dcll(ast_dcll_t* l);
 void print_fnct(ast_fnct_t* f);
 void print_fctl(ast_fctl_t* l);
 void print_prgm(ast_prgm_t* p);
+
+void print_ir(ir_prgm_t* i);
 
 #endif

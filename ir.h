@@ -46,14 +46,14 @@ typedef enum
 	I_LOR, I_AND, I_XOR,
 	I_ADD, I_SUB, I_MUL, I_DIV, I_MOD,
 	I_LBL, I_JMP,
-	I_JEQ, I_JNE, I_JGE, JGT, JLE, JLT,
+	I_JEQ, I_JNE, I_JGE, I_JGT, I_JLE, I_JLT,
 	I_CAL, I_RET,
 } ir_opcode_t;
 
 struct ir_instr_t
 {
 	ir_opcode_t type;
-	ir_arg_t dst;
+	ir_arg_t op0;
 	ir_arg_t op1;
 	ir_arg_t op2;
 };

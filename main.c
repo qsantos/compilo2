@@ -48,5 +48,7 @@ int main(void)
 	ir_prgm_t ir;
 	ast2ir(&ir, parsed);
 
+	print_ir(&ir);
+	
 	return 0;
 }
