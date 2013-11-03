@@ -17,3 +17,17 @@
 \*/
 
 #include "ir.h"
+
+#include <stdlib.h>
+
+void ir_init(ir_prgm_t* p)
+{
+	p->n_instr = 0;
+	p->a_instr = 0;
+	p->instrs = NULL;
+}
+
+void ir_del(ir_prgm_t* p)
+{
+	free(p->instrs);
+}
