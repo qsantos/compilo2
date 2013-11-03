@@ -126,5 +126,7 @@ static void aux_prgm(ir_prgm_t* i, ast_prgm_t* p)
 
 void ast2ir(ir_prgm_t* i, ast_prgm_t* a)
 {
+	ir_init(i);
 	aux_prgm(i, a);
+	ir_del(i);
 }

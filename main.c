@@ -23,6 +23,7 @@
 #include "ast.h"
 #include "print.h"
 #include "symbol.h"
+#include "ast2ir.h"
 
 extern int yyparse(void);
 
@@ -43,6 +44,9 @@ int main(void)
 		fprintf(stderr, "An error occured\n");
 		exit(1);
 	}
+
+	ir_prgm_t ir;
+	ast2ir(&ir, parsed);
 
 	return 0;
 }
