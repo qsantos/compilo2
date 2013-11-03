@@ -45,10 +45,16 @@ int main(void)
 		exit(1);
 	}
 
-	ir_prgm_t ir;
-	ast2ir(&ir, parsed);
+	print_prgm(parsed);
 
+	ir_prgm_t ir;
+	ir_init(&ir);
+
+	ast2ir(&ir, parsed);
 	print_ir(&ir);
+
+	ir_del(&ir);
+	prgm_del(parsed);
 	
 	return 0;
 }

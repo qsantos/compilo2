@@ -250,29 +250,29 @@ void print_ir(ir_prgm_t* ir)
 		ir_opcode_t t = j->type;
 		switch (t)
 		{
-		case I_NOP: printf("nop");
-		case I_HLT: printf("hlt");
-		case I_MOV: printf("mov");
-		case I_NEG: printf("neg");
-		case I_NOT: printf("not");
-		case I_LOR: printf("lor");
-		case I_AND: printf("and");
-		case I_XOR: printf("xor");
-		case I_ADD: printf("add");
-		case I_SUB: printf("sub");
-		case I_MUL: printf("myl");
-		case I_DIV: printf("div");
-		case I_MOD: printf("mod");
-		case I_LBL: printf("lbl");
-		case I_JMP: printf("jmp");
-		case I_JEQ: printf("jeq");
-		case I_JNE: printf("jne");
-		case I_JGE: printf("jge");
-		case I_JGT: printf("jgt");
-		case I_JLE: printf("jle");
-		case I_JLT: printf("jlt");
-		case I_CAL: printf("cal");
-		case I_RET: printf("ret");
+		case I_NOP: printf("nop"); break;
+		case I_HLT: printf("hlt"); break;
+		case I_MOV: printf("mov"); break;
+		case I_NEG: printf("neg"); break;
+		case I_NOT: printf("not"); break;
+		case I_LOR: printf("lor"); break;
+		case I_AND: printf("and"); break;
+		case I_XOR: printf("xor"); break;
+		case I_ADD: printf("add"); break;
+		case I_SUB: printf("sub"); break;
+		case I_MUL: printf("myl"); break;
+		case I_DIV: printf("div"); break;
+		case I_MOD: printf("mod"); break;
+		case I_LBL: printf("lbl"); break;
+		case I_JMP: printf("jmp"); break;
+		case I_JEQ: printf("jeq"); break;
+		case I_JNE: printf("jne"); break;
+		case I_JGE: printf("jge"); break;
+		case I_JGT: printf("jgt"); break;
+		case I_JLE: printf("jle"); break;
+		case I_JLT: printf("jlt"); break;
+		case I_CAL: printf("cal"); break;
+		case I_RET: printf("ret"); break;
 		}
 
 		if (t == I_LBL) // TODO
