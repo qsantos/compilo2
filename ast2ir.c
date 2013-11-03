@@ -18,13 +18,12 @@ static void      aux_prgm(ir_prgm_t* i, ast_prgm_t* p);
 
 static ir_aval_t aux_lval(ir_prgm_t* i, ast_lval_t* l)
 {
-	(void) i;
-	(void) l;
 	switch (l->type)
 	{
-	case L_VAR:
+	case L_VAR: // TODO
+		return 0;
 	case L_DRF:
-		break;
+		return aux_expr(i, l->v.exp.a);
 	}
 	return 0;
 }
@@ -33,6 +32,7 @@ static ir_aval_t aux_expr(ir_prgm_t* i, ast_expr_t* e)
 {
 	ir_aval_t a;
 	ir_aval_t b;
+	ir_atype_t t;
 	switch (e->type)
 	{
 	case E_IMM:
@@ -54,11 +54,16 @@ static ir_aval_t aux_expr(ir_prgm_t* i, ast_expr_t* e)
 		return a;
 	case E_LVA:
 		return aux_lval(i, e->v.lva.a);
-	case E_ASG: // TODO
+	case E_ASG:
+		a = aux_lval(i, e->v.asg.a);
+		b = aux_expr(i, e->v.asg.b);
+		t = e->v.asg.a->type == L_VAR ? O_REG : O_REGADDR;
+		ir_push2(i, I_MOV, t, a, O_REG, b);
+		return b;
 	case E_FUN: // TODO
-	default:
-		return 0;
+		break;
 	}
+	return 0;
 }
 
 static void aux_stmt(ir_prgm_t* i, ast_stmt_t* s)
