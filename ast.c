@@ -246,6 +246,7 @@ ast_fnct_t* fnct_make(ast_id_t n, ast_dcll_t* d, ast_type_t* r, ast_blck_t* c)
 	ret->d = d;
 	ret->r = r;
 	ret->c = c;
+	ret->t = 0;
 	return ret;
 }
 

@@ -321,6 +321,8 @@ static ast_typl_t* aux_fnct_dcll2typl(ast_dcll_t* d)
 }
 static void aux_fnct(ast_fnct_t* f)
 {
+	size_t prev_n_symbs = n_symbs;
+
 	ast_type_t* t = type_fun(f->r, aux_fnct_dcll2typl(f->d));
 	scope_register(f->n, t);
 
@@ -328,6 +330,8 @@ static void aux_fnct(ast_fnct_t* f)
 	aux_dcll(f->d);
 	aux_blck(f->c);
 	scope_exit();
+
+	f->t = n_symbs - prev_n_symbs;
 }
 static void aux_fctl(ast_fctl_t* l)
 {

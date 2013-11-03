@@ -1,34 +1,36 @@
 #include "ast2ir.h"
 
-static ir_aval_t aux_lval(ir_prgm_t* i, ast_lval_t* l);
-static ir_aval_t aux_expr(ir_prgm_t* i, ast_expr_t* e);
-static void      aux_stmt(ir_prgm_t* i, ast_stmt_t* s);
-static void      aux_stml(ir_prgm_t* i, ast_stml_t* l);
-static void      aux_blck(ir_prgm_t* i, ast_blck_t* b);
+#include "htable.h"
+
+static ir_aval_t aux_lval(ir_prgm_t* i, ast_lval_t* l, htable_t* h);
+static ir_aval_t aux_expr(ir_prgm_t* i, ast_expr_t* e, htable_t* h);
+static void      aux_stmt(ir_prgm_t* i, ast_stmt_t* s, htable_t* h);
+static void      aux_stml(ir_prgm_t* i, ast_stml_t* l, htable_t* h);
+static void      aux_blck(ir_prgm_t* i, ast_blck_t* b, htable_t* h);
 static void      aux_fnct(ir_prgm_t* i, ast_fnct_t* f);
 static void      aux_fctl(ir_prgm_t* i, ast_fctl_t* l);
 static void      aux_prgm(ir_prgm_t* i, ast_prgm_t* p);
 
-#define BIN(N) \
-	case E_##N: \
-		a = aux_expr(i, e->v.bin.a); \
-		b = aux_expr(i, e->v.bin.b); \
-		ir_push3(i, I_##N, O_REG, a, O_REG, a, O_REG, b); \
-		return a; \
-
-static ir_aval_t aux_lval(ir_prgm_t* i, ast_lval_t* l)
+static ir_aval_t aux_lval(ir_prgm_t* i, ast_lval_t* l, htable_t* h)
 {
 	switch (l->type)
 	{
-	case L_VAR: // TODO
-		return 0;
+	case L_VAR:
+		return htable_find(h, l->v.var.a);
 	case L_DRF:
-		return aux_expr(i, l->v.exp.a);
+		return aux_expr(i, l->v.exp.a, h);
 	}
 	return 0;
 }
 
-static ir_aval_t aux_expr(ir_prgm_t* i, ast_expr_t* e)
+#define BIN(N) \
+	case E_##N: \
+		a = aux_expr(i, e->v.bin.a, h); \
+		b = aux_expr(i, e->v.bin.b, h); \
+		ir_push3(i, I_##N, O_REG, a, O_REG, a, O_REG, b); \
+		return a; \
+
+static ir_aval_t aux_expr(ir_prgm_t* i, ast_expr_t* e, htable_t* h)
 {
 	ir_aval_t a;
 	ir_aval_t b;
@@ -45,18 +47,18 @@ static ir_aval_t aux_expr(ir_prgm_t* i, ast_expr_t* e)
 	BIN(DIV)
 	BIN(MOD)
 	case E_INC:
-		a = aux_lval(i, e->v.lva.a);
+		a = aux_lval(i, e->v.lva.a, h);
 		ir_push3(i, I_ADD, O_REG, a, O_REG, a, O_IMM, 1);
 		return a;
 	case E_DEC:
-		a = aux_lval(i, e->v.lva.a);
+		a = aux_lval(i, e->v.lva.a, h);
 		ir_push3(i, I_SUB, O_REG, a, O_REG, a, O_IMM, 1);
 		return a;
 	case E_LVA:
-		return aux_lval(i, e->v.lva.a);
+		return aux_lval(i, e->v.lva.a, h);
 	case E_ASG:
-		a = aux_lval(i, e->v.asg.a);
-		b = aux_expr(i, e->v.asg.b);
+		a = aux_lval(i, e->v.asg.a, h);
+		b = aux_expr(i, e->v.asg.b, h);
 		t = e->v.asg.a->type == L_VAR ? O_REG : O_REGADDR;
 		ir_push2(i, I_MOV, t, a, O_REG, b);
 		return b;
@@ -66,17 +68,18 @@ static ir_aval_t aux_expr(ir_prgm_t* i, ast_expr_t* e)
 	return 0;
 }
 
-static void aux_stmt(ir_prgm_t* i, ast_stmt_t* s)
+static void aux_stmt(ir_prgm_t* i, ast_stmt_t* s, htable_t* h)
 {
 	switch (s->type)
 	{
 	case S_BLK:
-		aux_blck(i, s->v.blk.a);
+		aux_blck(i, s->v.blk.a, h);
 		break;
 	case S_EXP:
-		aux_expr(i, s->v.exp.a);
+		aux_expr(i, s->v.exp.a, h);
 		break;
 	case S_DEF:
+		htable_push(h, s->v.def.a->n);
 		break;
 	case S_IFT:
 	case S_ITE:
@@ -85,22 +88,28 @@ static void aux_stmt(ir_prgm_t* i, ast_stmt_t* s)
 	}
 }
 
-static void aux_stml(ir_prgm_t* i, ast_stml_t* l)
+static void aux_stml(ir_prgm_t* i, ast_stml_t* l, htable_t* h)
 {
 	if (!l) return;
-	aux_stmt(i, l->s);
-	aux_stml(i, l->l);
+	aux_stmt(i, l->s, h);
+	aux_stml(i, l->l, h);
 }
 
-static void aux_blck(ir_prgm_t* i, ast_blck_t* b)
+static void aux_blck(ir_prgm_t* i, ast_blck_t* b, htable_t* h)
 {
-	aux_stml(i, b->l);
+	aux_stml(i, b->l, h);
 }
 
 static void aux_fnct(ir_prgm_t* i, ast_fnct_t* f)
 {
+	htable_t ht;
+	htable_init(&ht);
+
 	ir_push0(i, I_LBL);
-	aux_blck(i, f->c);
+	ir_resreg(i, f->t);
+	aux_blck(i, f->c, &ht);
+
+	htable_del(&ht);
 }
 
 static void aux_fctl(ir_prgm_t* i, ast_fctl_t* l)

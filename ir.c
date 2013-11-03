@@ -36,6 +36,11 @@ void ir_del(ir_prgm_t* p)
 	free(p->instrs);
 }
 
+void ir_resreg(ir_prgm_t* p, size_t n)
+{
+	p->n_regs = n;
+}
+
 ir_aval_t ir_reg(ir_prgm_t* p)
 {
 	return p->n_regs++;

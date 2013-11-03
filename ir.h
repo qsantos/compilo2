@@ -72,6 +72,9 @@ struct ir_prgm_t
 void ir_init(ir_prgm_t* p);
 void ir_del (ir_prgm_t* p);
 
+// reset registers and allocate 'n' fresh ones
+void ir_resreg(ir_prgm_t* p, size_t n);
+
 // get fresh register
 ir_aval_t ir_reg(ir_prgm_t* p);
 
