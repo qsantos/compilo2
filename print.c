@@ -260,7 +260,7 @@ void print_ir(ir_prgm_t* ir)
 		case I_XOR: printf("xor"); break;
 		case I_ADD: printf("add"); break;
 		case I_SUB: printf("sub"); break;
-		case I_MUL: printf("myl"); break;
+		case I_MUL: printf("mul"); break;
 		case I_DIV: printf("div"); break;
 		case I_MOD: printf("mod"); break;
 		case I_LBL: printf("lbl"); break;
