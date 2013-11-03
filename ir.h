@@ -60,6 +60,8 @@ struct ir_instr_t
 
 struct ir_prgm_t
 {
+	ir_aval_t    n_regs;
+
 	size_t       n_instr;
 	size_t       a_instr;
 	ir_instr_t* instrs;
@@ -70,7 +72,8 @@ struct ir_prgm_t
 void ir_init(ir_prgm_t* p);
 void ir_del (ir_prgm_t* p);
 
-
+// get fresh register
+ir_aval_t ir_reg(ir_prgm_t* p);
 
 // add new instructions
 // ir_pushX() expects X operands

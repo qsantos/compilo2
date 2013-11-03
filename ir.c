@@ -25,6 +25,7 @@
 
 void ir_init(ir_prgm_t* p)
 {
+	p->n_regs  = 0;
 	p->n_instr = 0;
 	p->a_instr = 0;
 	p->instrs = NULL;
@@ -33,6 +34,11 @@ void ir_init(ir_prgm_t* p)
 void ir_del(ir_prgm_t* p)
 {
 	free(p->instrs);
+}
+
+ir_aval_t ir_reg(ir_prgm_t* p)
+{
+	return p->n_regs++;
 }
 
 void ir_push0(ir_prgm_t* p, ir_opcode_t o)
