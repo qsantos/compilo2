@@ -19,6 +19,9 @@
 #include "ir.h"
 
 #include <stdlib.h>
+#include <string.h>
+
+#include "util.h"
 
 void ir_init(ir_prgm_t* p)
 {
@@ -30,4 +33,47 @@ void ir_init(ir_prgm_t* p)
 void ir_del(ir_prgm_t* p)
 {
 	free(p->instrs);
+}
+
+void ir_push0(ir_prgm_t* p, ir_opcode_t o)
+{
+	ir_push3(p, o, 0, 0, 0, 0, 0, 0);
+}
+
+void ir_push1(ir_prgm_t* p, ir_opcode_t o,
+	ir_atype_t t1, ir_aval_t x1
+)
+{
+	ir_push3(p, o, t1, x1, 0, 0, 0, 0);
+}
+
+void ir_push2(ir_prgm_t* p, ir_opcode_t o,
+	ir_atype_t t1, ir_aval_t x1,
+	ir_atype_t t2, ir_aval_t x2
+)
+{
+	ir_push3(p, o, t1, x1, t2, x2, 0, 0);
+}
+
+void ir_push3(ir_prgm_t* p, ir_opcode_t o,
+	ir_atype_t t1, ir_aval_t x1,
+	ir_atype_t t2, ir_aval_t x2,
+	ir_atype_t t3, ir_aval_t x3
+)
+{
+	if (p->n_instr == p->a_instr)
+	{
+		p->a_instr = p->a_instr ? 2*p->a_instr : 1;
+		p->instrs = MREALLOC(p->instrs, ir_instr_t, p->a_instr);
+	}
+
+	ir_instr_t i =
+	{
+		o,
+		{ t1, x1 },
+		{ t2, x2 },
+		{ t3, x3 },
+	};
+
+	memcpy(&p->instrs[p->n_instr++], &i, sizeof(ir_instr_t));
 }
