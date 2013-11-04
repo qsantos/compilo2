@@ -25,13 +25,15 @@ static ir_aval_t aux_lval(ir_prgm_t* i, ast_lval_t* l, htable_t* h)
 
 #define BIN(N) \
 	case E_##N: \
+		r = ir_reg(i); \
 		a = aux_expr(i, e->v.bin.a, h); \
 		b = aux_expr(i, e->v.bin.b, h); \
-		ir_push3(i, I_##N, O_REG, a, O_REG, a, O_REG, b); \
-		return a; \
+		ir_push3(i, I_##N, O_REG, r, O_REG, a, O_REG, b); \
+		return r; \
 
 static ir_aval_t aux_expr(ir_prgm_t* i, ast_expr_t* e, htable_t* h)
 {
+	ir_aval_t r;
 	ir_aval_t a;
 	ir_aval_t b;
 	ir_atype_t t;
