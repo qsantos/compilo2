@@ -48,6 +48,7 @@ typedef enum
 	I_ADD, I_SUB, I_MUL, I_DIV, I_MOD,
 	I_LBL, I_JMP,
 	I_JEQ, I_JNE, I_JGE, I_JGT, I_JLE, I_JLT,
+	I_PSH, I_POP, I_MPP, // push, pop, multi-pop
 	I_CAL, I_RET,
 } ir_opcode_t;
 

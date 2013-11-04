@@ -271,6 +271,9 @@ void print_ir(ir_prgm_t* ir)
 		case I_JGT: printf("jgt"); break;
 		case I_JLE: printf("jle"); break;
 		case I_JLT: printf("jlt"); break;
+		case I_PSH: printf("psh"); break;
+		case I_POP: printf("pop"); break;
+		case I_MPP: printf("mpp"); break;
 		case I_CAL: printf("cal"); break;
 		case I_RET: printf("ret"); break;
 		case I_LBL:
@@ -284,7 +287,7 @@ void print_ir(ir_prgm_t* ir)
 		printf(" ");
 		print_op(&j->op0);
 
-		if (t == I_JMP || t == I_CAL)
+		if (t == I_JMP || t == I_PSH || t == I_POP || t == I_MPP || t == I_CAL)
 			continue;
 
 		printf(", ");
