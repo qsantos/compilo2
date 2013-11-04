@@ -19,6 +19,7 @@
 #ifndef AST_H
 #define AST_H
 
+#include <sys/types.h>
 #include <stdbool.h>
 
 // defined types
@@ -160,6 +161,8 @@ struct ast_fnct_t
 	ast_dcll_t* d;
 	ast_type_t* r;
 	ast_blck_t* c;
+
+	size_t t; // number of local variables
 };
 
 struct ast_fctl_t

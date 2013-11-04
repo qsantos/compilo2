@@ -35,6 +35,7 @@ struct syminfo_t
 {
 	const char* name;
 	ast_type_t* type;
+	ir_label_t  label;
 };
 
 static size_t     n_symbs = 0;
@@ -321,6 +322,8 @@ static ast_typl_t* aux_fnct_dcll2typl(ast_dcll_t* d)
 }
 static void aux_fnct(ast_fnct_t* f)
 {
+	size_t prev_n_symbs = n_symbs;
+
 	ast_type_t* t = type_fun(f->r, aux_fnct_dcll2typl(f->d));
 	scope_register(f->n, t);
 
@@ -328,6 +331,8 @@ static void aux_fnct(ast_fnct_t* f)
 	aux_dcll(f->d);
 	aux_blck(f->c);
 	scope_exit();
+
+	f->t = n_symbs - prev_n_symbs;
 }
 static void aux_fctl(ast_fctl_t* l)
 {
@@ -339,5 +344,16 @@ void ast_analyze_symbols(ast_prgm_t* p)
 {
 	htable_init(&ht);
 	aux_fctl(p->f);
-	htable_del(&ht);
+//	htable_del(&ht); // TODO
+}
+
+void symbol_set_label(const char* name, ir_label_t label)
+{
+	symbol_t s = htable_find(&ht, name);
+	symbs[s-1].label = label;
+}
+ir_label_t symbol_get_label(const char* name)
+{
+	symbol_t s = htable_find(&ht, name);
+	return symbs[s-1].label;
 }

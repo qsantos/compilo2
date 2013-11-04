@@ -16,45 +16,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 \*/
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
+#ifndef AST2IR_H
+#define AST2IR_H
 
+#include "ir.h"
 #include "ast.h"
-#include "print.h"
-#include "symbol.h"
-#include "ast2ir.h"
 
-extern int yyparse(void);
+void ast2ir(ir_prgm_t* i, ast_prgm_t* a);
 
-ast_prgm_t* parsed = NULL;
-bool        error  = false;
-
-int main(void)
-{
-	if (yyparse() != 0)
-	{
-		fprintf(stderr, "Parsing has failed\n");
-		exit(1);
-	}
-
-	ast_analyze_symbols(parsed);
-	if (error)
-	{
-		fprintf(stderr, "An error occured\n");
-		exit(1);
-	}
-
-	print_prgm(parsed);
-
-	ir_prgm_t ir;
-	ir_init(&ir);
-
-	ast2ir(&ir, parsed);
-	print_ir(&ir);
-
-	ir_del(&ir);
-	prgm_del(parsed);
-	
-	return 0;
-}
+#endif

@@ -28,6 +28,7 @@ static unsigned int hash(const char* str);
 void htable_init(htable_t* ht)
 {
 	memset(ht->b, 0, sizeof(ht->b));
+	ht->cursymbol = 0;
 }
 
 static void bucket_del(bucket_t* b)
@@ -50,17 +51,15 @@ void htable_del(htable_t* ht)
 	}
 }
 
-static symbol_t bucket_append(bucket_t* b)
+static symbol_t bucket_append(bucket_t* b, symbol_t s)
 {
-	static unsigned int cursymbol = 0;
-
 	if (b->a == b->n)
 	{
 		b->a <<= 1;
 		b->s = MREALLOC(b->s, symbol_t, b->a);
 	}
 
-	return (b->s[b->n++] = ++cursymbol);
+	return (b->s[b->n++] = s);
 }
 symbol_t htable_push(htable_t* ht, const char* name)
 {
@@ -69,6 +68,7 @@ symbol_t htable_push(htable_t* ht, const char* name)
 		b = &(*b)->next;
 
 	bucket_t* c = *b;
+	symbol_t s = ++ht->cursymbol;
 	if (c == NULL)
 	{
 		bucket_t* n = MALLOC(bucket_t);
@@ -78,10 +78,10 @@ symbol_t htable_push(htable_t* ht, const char* name)
 		n->a    = 10;
 		n->s    = MMALLOC(symbol_t, n->a);
 		*b = n;
-		return bucket_append(n);
+		return bucket_append(n, s);
 	}
 
-	return bucket_append(c);
+	return bucket_append(c, s);
 }
 
 symbol_t htable_pop(htable_t* ht, const char* name)

@@ -20,7 +20,11 @@
 #define SYMBOL_H
 
 #include "ast.h"
+#include "ir.h"
 
 void ast_analyze_symbols(ast_prgm_t* p);
+
+void       symbol_set_label(const char* name, ir_label_t label);
+ir_label_t symbol_get_label(const char* name);
 
 #endif

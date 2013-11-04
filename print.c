@@ -221,3 +221,84 @@ void print_prgm(ast_prgm_t* p)
 {
 	print_fctl(p->f);
 }
+
+static void print_op(ir_arg_t* a)
+{
+	switch (a->t)
+	{
+	case O_IMM:
+		printf("$%#x", a->v);
+		break;
+	case O_IMMADDR:
+		printf("*$%#x", a->v);
+		break;
+	case O_REG:
+		printf("%%r%u", a->v);
+		break;
+	case O_REGADDR:
+		printf("*%%r%u", a->v);
+		break;
+	}
+}
+void print_ir(ir_prgm_t* ir)
+{
+	for (size_t i = 0; i < ir->n_instr; i++)
+	{
+		if (i) printf("\n");
+
+		ir_instr_t* j = &ir->instrs[i];
+		ir_opcode_t t = j->type;
+
+		switch (t)
+		{
+		case I_NOP: printf("nop"); break;
+		case I_HLT: printf("hlt"); break;
+		case I_MOV: printf("mov"); break;
+		case I_NEG: printf("neg"); break;
+		case I_NOT: printf("not"); break;
+		case I_LOR: printf("lor"); break;
+		case I_AND: printf("and"); break;
+		case I_XOR: printf("xor"); break;
+		case I_ADD: printf("add"); break;
+		case I_SUB: printf("sub"); break;
+		case I_MUL: printf("mul"); break;
+		case I_DIV: printf("div"); break;
+		case I_MOD: printf("mod"); break;
+		case I_JMP: printf("jmp"); break;
+		case I_JEQ: printf("jeq"); break;
+		case I_JNE: printf("jne"); break;
+		case I_JGE: printf("jge"); break;
+		case I_JGT: printf("jgt"); break;
+		case I_JLE: printf("jle"); break;
+		case I_JLT: printf("jlt"); break;
+		case I_PSH: printf("psh"); break;
+		case I_POP: printf("pop"); break;
+		case I_MPP: printf("mpp"); break;
+		case I_CAL: printf("cal"); break;
+		case I_RET: printf("ret\n"); break;
+		case I_LBL:
+			printf("l%u:", j->op0.v);
+			continue;
+		}
+
+		if (t == I_NOP || t == I_HLT || t == I_RET)
+			continue;
+
+		printf(" ");
+		print_op(&j->op0);
+
+		if (t == I_JMP || t == I_PSH || t == I_POP || t == I_MPP || t == I_CAL)
+			continue;
+
+		printf(", ");
+		print_op(&j->op1);
+
+		if (t == I_MOV || t == I_NEG || t == I_NOT)
+			continue;
+
+		printf(", ");
+		print_op(&j->op2);
+
+	}
+	printf("\n");
+}

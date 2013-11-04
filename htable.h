@@ -41,6 +41,7 @@ struct bucket_t
 struct htable_t
 {
 	bucket_t* b[N_BUCKETS];
+	symbol_t  cursymbol;
 };
 
 void htable_init(htable_t* ht);

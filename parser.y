@@ -30,10 +30,10 @@ extern ast_prgm_t* parsed;
 %token <s> id
 %left STAR
 %left INC DEC
+%right IF ELSE WHILE
+%left '=' ',' ';'
 %left '+' '-'
 %left '*' '/' '%'
-%left '=' ',' ';'
-%right IF ELSE WHILE
 %type  <t> type
 %type  <l> lval
 %type  <a> argl
