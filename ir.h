@@ -22,6 +22,7 @@
 #include <sys/types.h>
 
 typedef unsigned int      ir_aval_t;
+typedef unsigned int      ir_label_t;
 typedef struct ir_arg_t   ir_arg_t;
 typedef struct ir_instr_t ir_instr_t;
 typedef struct ir_prgm_t  ir_prgm_t;
@@ -61,6 +62,7 @@ struct ir_instr_t
 struct ir_prgm_t
 {
 	ir_aval_t    n_regs;
+	ir_label_t   n_labels;
 
 	size_t       n_instr;
 	size_t       a_instr;
@@ -72,11 +74,22 @@ struct ir_prgm_t
 void ir_init(ir_prgm_t* p);
 void ir_del (ir_prgm_t* p);
 
+
+
+// registers
+
 // reset registers and allocate 'n' fresh ones
 void ir_resreg(ir_prgm_t* p, size_t n);
-
 // get fresh register
 ir_aval_t ir_reg(ir_prgm_t* p);
+
+
+
+// labels
+
+ir_label_t ir_label(ir_prgm_t* p);
+
+
 
 // add new instructions
 // ir_pushX() expects X operands
