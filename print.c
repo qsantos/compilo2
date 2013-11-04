@@ -248,6 +248,7 @@ void print_ir(ir_prgm_t* ir)
 
 		ir_instr_t* j = &ir->instrs[i];
 		ir_opcode_t t = j->type;
+
 		switch (t)
 		{
 		case I_NOP: printf("nop"); break;
@@ -263,7 +264,6 @@ void print_ir(ir_prgm_t* ir)
 		case I_MUL: printf("mul"); break;
 		case I_DIV: printf("div"); break;
 		case I_MOD: printf("mod"); break;
-		case I_LBL: printf("lbl"); break;
 		case I_JMP: printf("jmp"); break;
 		case I_JEQ: printf("jeq"); break;
 		case I_JNE: printf("jne"); break;
@@ -273,10 +273,10 @@ void print_ir(ir_prgm_t* ir)
 		case I_JLT: printf("jlt"); break;
 		case I_CAL: printf("cal"); break;
 		case I_RET: printf("ret"); break;
-		}
-
-		if (t == I_LBL) // TODO
+		case I_LBL:
+			printf("l%u:", j->op0.v);
 			continue;
+		}
 
 		if (t == I_NOP || t == I_HLT || t == I_RET)
 			continue;
