@@ -11,7 +11,7 @@ do
 	line=`grep -Enm1 '^\\\\\*/$' $i`
 	line=${line%%:\\*/}
 	line=${line:--1}
-	line=$(($line+1))
+	line=$(($line+2))
 
 	# skip the old header
 	tail $i -n+$line
