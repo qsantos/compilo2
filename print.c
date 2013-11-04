@@ -275,7 +275,7 @@ void print_ir(ir_prgm_t* ir)
 		case I_POP: printf("pop"); break;
 		case I_MPP: printf("mpp"); break;
 		case I_CAL: printf("cal"); break;
-		case I_RET: printf("ret"); break;
+		case I_RET: printf("ret\n"); break;
 		case I_LBL:
 			printf("l%u:", j->op0.v);
 			continue;
