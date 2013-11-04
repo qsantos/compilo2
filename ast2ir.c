@@ -72,6 +72,8 @@ static ir_aval_t aux_expr(ir_prgm_t* i, ast_expr_t* e, htable_t* h)
 
 static void aux_stmt(ir_prgm_t* i, ast_stmt_t* s, htable_t* h)
 {
+	ir_label_t la;
+	ir_aval_t a;
 	switch (s->type)
 	{
 	case S_BLK:
@@ -84,6 +86,14 @@ static void aux_stmt(ir_prgm_t* i, ast_stmt_t* s, htable_t* h)
 		htable_push(h, s->v.def.a->n);
 		break;
 	case S_IFT:
+		la = ir_label(i);
+
+		a = aux_expr(i, s->v.ift.c, h);
+		ir_push3(i, I_JEQ, O_REG, a, O_IMM, 0, O_IMM, la);
+		aux_stmt(i, s->v.ift.a, h);
+
+		ir_push1(i, I_LBL, O_IMM, la);
+		break;
 	case S_ITE:
 	case S_WHI:
 		break;
@@ -107,7 +117,6 @@ static void aux_fnct(ir_prgm_t* i, ast_fnct_t* f)
 	htable_t ht;
 	htable_init(&ht);
 
-	ir_push0(i, I_LBL);
 	ir_resreg(i, f->t);
 	aux_blck(i, f->c, &ht);
 
