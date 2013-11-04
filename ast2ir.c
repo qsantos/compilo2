@@ -87,27 +87,36 @@ static void aux_stmt(ir_prgm_t* i, ast_stmt_t* s, htable_t* h)
 		htable_push(h, s->v.def.a->n);
 		break;
 	case S_IFT:
-		la = ir_label(i);
+		la = ir_label_make(i);
 
+		// if
 		a = aux_expr(i, s->v.ift.c, h);
 		ir_push3(i, I_JEQ, O_REG, a, O_IMM, 0, O_IMM, la);
+
+		// then
 		aux_stmt(i, s->v.ift.a, h);
 
-		ir_push1(i, I_LBL, O_IMM, la);
+		// end
+		ir_label_push(i, la);
 		break;
 	case S_ITE:
-		la = ir_label(i);
-		lb = ir_label(i);
+		la = ir_label_make(i);
+		lb = ir_label_make(i);
 
+		// if
 		a = aux_expr(i, s->v.ite.c, h);
 		ir_push3(i, I_JEQ, O_REG, a, O_IMM, 0, O_IMM, la);
+
+		// then
 		aux_stmt(i, s->v.ite.a, h);
 		ir_push1(i, I_JMP, O_IMM, lb);
 
-		ir_push1(i, I_LBL, O_IMM, la);
+		// else
+		ir_label_push(i, la);
 		aux_stmt(i, s->v.ite.b, h);
 
-		ir_push1(i, I_LBL, O_IMM, lb);
+		// end
+		ir_label_push(i, lb);
 		break;
 	case S_WHI:
 		break;

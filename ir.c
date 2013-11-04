@@ -46,9 +46,14 @@ ir_aval_t ir_reg(ir_prgm_t* p)
 	return p->n_regs++;
 }
 
-ir_label_t ir_label(ir_prgm_t* p)
+ir_label_t ir_label_make(ir_prgm_t* p)
 {
 	return p->n_labels++;
+}
+
+void ir_label_push(ir_prgm_t* p, ir_label_t l)
+{
+	ir_push1(p, I_LBL, O_IMM, l);
 }
 
 void ir_push0(ir_prgm_t* p, ir_opcode_t o)

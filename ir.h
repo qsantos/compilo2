@@ -87,7 +87,8 @@ ir_aval_t ir_reg(ir_prgm_t* p);
 
 // labels
 
-ir_label_t ir_label(ir_prgm_t* p);
+ir_label_t ir_label_make(ir_prgm_t* p);
+void       ir_label_push(ir_prgm_t* p, ir_label_t l);
 
 
 
