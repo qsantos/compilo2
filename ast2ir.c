@@ -119,6 +119,20 @@ static void aux_stmt(ir_prgm_t* i, ast_stmt_t* s, htable_t* h)
 		ir_label_push(i, lb);
 		break;
 	case S_WHI:
+		la = ir_label_make(i);
+		lb = ir_label_make(i);
+
+		// while
+		ir_label_push(i, la);
+		a = aux_expr(i, s->v.whi.c, h);
+		ir_push3(i, I_JEQ, O_REG, a, O_IMM, 0, O_IMM, lb);
+
+		// do
+		aux_stmt(i, s->v.whi.a, h);
+		ir_push1(i, I_JMP, O_IMM, la);
+
+		// end
+		ir_label_push(i, lb);
 		break;
 	}
 }
