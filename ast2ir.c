@@ -19,6 +19,7 @@
 #include "ast2ir.h"
 
 #include "htable.h"
+#include "symbol.h"
 
 static ir_aval_t aux_lval(ir_prgm_t* i, ast_lval_t* l, htable_t* h);
 static ir_aval_t aux_expr(ir_prgm_t* i, ast_expr_t* e, htable_t* h);
@@ -41,6 +42,15 @@ static ir_aval_t aux_lval(ir_prgm_t* i, ast_lval_t* l, htable_t* h)
 	return 0;
 }
 
+static size_t aux_argl(ir_prgm_t* i, ast_argl_t* l, htable_t* h)
+{
+	if (!l) return 0;
+	size_t r = aux_argl(i, l->l, h);
+	ir_aval_t a = aux_expr(i, l->a, h);
+	ir_push1(i, I_PSH, O_REG, a);
+	return r+1;
+}
+
 #define BIN(N) \
 	case E_##N: \
 		r = ir_reg(i); \
@@ -55,6 +65,8 @@ static ir_aval_t aux_expr(ir_prgm_t* i, ast_expr_t* e, htable_t* h)
 	ir_aval_t a;
 	ir_aval_t b;
 	ir_atype_t t;
+	ir_label_t l;
+	size_t n;
 	switch (e->type)
 	{
 	case E_IMM:
@@ -82,7 +94,11 @@ static ir_aval_t aux_expr(ir_prgm_t* i, ast_expr_t* e, htable_t* h)
 		t = e->v.asg.a->type == L_VAR ? O_REG : O_REGADDR;
 		ir_push2(i, I_MOV, t, a, O_REG, b);
 		return b;
-	case E_FUN: // TODO
+	case E_FUN:
+		n = aux_argl(i, e->v.fun.l, h);
+		l = symbol_get_label(e->v.fun.n);
+		ir_push1(i, I_CAL, O_IMM, l);
+		ir_push1(i, I_MPP, O_IMM, n);
 		break;
 	}
 	return 0;
@@ -172,8 +188,13 @@ static void aux_fnct(ir_prgm_t* i, ast_fnct_t* f)
 	htable_t ht;
 	htable_init(&ht);
 
+	ir_label_t l = ir_label_make(i);
+	symbol_set_label(f->n, l);
+	ir_label_push(i, l);
+
 	ir_resreg(i, f->t);
 	aux_blck(i, f->c, &ht);
+	ir_push0(i, I_RET);
 
 	htable_del(&ht);
 }
