@@ -50,20 +50,20 @@ extern ast_prgm_t* parsed;
 
 %%
 type:
-  CHAR                                { $$ = type_char();           }
-| INT                                 { $$ = type_int ();           }
-| type '*'                            { $$ = type_ptr ($1);         }
+  CHAR                           { $$ = type_char();           }
+| INT                            { $$ = type_int ();           }
+| type '*'                       { $$ = type_ptr ($1);         }
 ;
 
 lval:
-  id                                  { $$ = lval_var($1);          }
-| '*' expr %prec STAR                 { $$ = lval_drf($2);          }
+  id                             { $$ = lval_var($1);          }
+| '*' expr %prec STAR            { $$ = lval_drf($2);          }
 ;
 
 argl:
-                                      { $$ = NULL;                  }
-| expr                                { $$ = argl_make($1, NULL);   }
-| expr ',' argl                       { $$ = argl_make($1, $3);     }
+                                 { $$ = NULL;                  }
+| expr                           { $$ = argl_make($1, NULL);   }
+| expr ',' argl                  { $$ = argl_make($1, $3);     }
 ;
 
 expr:
