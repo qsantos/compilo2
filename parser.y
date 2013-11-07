@@ -30,7 +30,7 @@ extern ast_prgm_t* parsed;
 %token <s> id
 %left STAR
 %left INC DEC
-%right IF ELSE WHILE
+%right IF ELSE WHILE RETURN
 %left '=' ',' ';'
 %left '+' '-'
 %left '*' '/' '%'
@@ -92,6 +92,7 @@ stmt:
 | IF '(' expr ')' stmt           { $$ = stmt_ifth($3, $5);     }
 | IF '(' expr ')' stmt ELSE stmt { $$ = stmt_ifte($3, $5, $7); }
 | WHILE '(' expr ')' stmt        { $$ = stmt_whil($3, $5);     }
+| RETURN expr                    { $$ = stmt_ret ($2);         }
 ;
 
 stml:

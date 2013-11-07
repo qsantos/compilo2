@@ -216,6 +216,14 @@ ast_stmt_t* stmt_whil(ast_expr_t* c, ast_stmt_t* a)
 	return ret;
 }
 
+ast_stmt_t* stmt_ret(ast_expr_t* e)
+{
+	ast_stmt_t* ret = MALLOC(ast_stmt_t);
+	ret->type = S_RET;
+	ret->v.exp.a = e;
+	return ret;
+}
+
 ast_stml_t* stml_make(ast_stmt_t* s, ast_stml_t* l)
 {
 	ast_stml_t* ret = MALLOC(ast_stml_t);
@@ -381,6 +389,9 @@ void stmt_del(ast_stmt_t* s)
 	case S_WHI:
 		expr_del(s->v.whi.c);
 		stmt_del(s->v.whi.a);
+		break;
+	case S_RET:
+		expr_del(s->v.exp.a);
 		break;
 	}
 	free(s);

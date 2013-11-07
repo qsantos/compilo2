@@ -295,6 +295,9 @@ static void aux_stmt(ast_stmt_t* s)
 		aux_expr(s->v.whi.c);
 		aux_stmt(s->v.whi.a);
 		break;
+	case S_RET:
+		aux_expr(s->v.exp.a);
+		break;
 	}
 }
 static void aux_stml(ast_stml_t* l)

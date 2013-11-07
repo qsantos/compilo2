@@ -159,6 +159,10 @@ void print_stmt(ast_stmt_t* s)
 		printf(")\n");
 		print_stmt(s->v.ift.a);
 		break;
+	case S_RET:
+		printf("return ");
+		print_expr(s->v.exp.a);
+		break;
 	}
 }
 

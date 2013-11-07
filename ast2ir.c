@@ -168,6 +168,10 @@ static void aux_stmt(ir_prgm_t* i, ast_stmt_t* s, htable_t* h)
 		// end
 		ir_label_push(i, lb);
 		break;
+	case S_RET:
+		a = aux_expr(i, s->v.exp.a, h);
+		ir_push2(i, I_MOV, O_REG, 0, O_REG, a);
+		break;
 	}
 }
 

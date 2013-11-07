@@ -126,6 +126,7 @@ struct ast_stmt_t
 		S_IFT,
 		S_ITE,
 		S_WHI,
+		S_RET,
 	} type;
 	union
 	{
@@ -212,6 +213,7 @@ ast_stmt_t* stmt_decl(ast_decl_t* d);
 ast_stmt_t* stmt_ifth(ast_expr_t* c, ast_stmt_t* a);
 ast_stmt_t* stmt_ifte(ast_expr_t* c, ast_stmt_t* a, ast_stmt_t* b);
 ast_stmt_t* stmt_whil(ast_expr_t* c, ast_stmt_t* a);
+ast_stmt_t* stmt_ret (ast_expr_t* e);
 
 ast_stml_t* stml_make(ast_stmt_t* s, ast_stml_t* l);
 ast_blck_t* blck_make(ast_stml_t* l);
